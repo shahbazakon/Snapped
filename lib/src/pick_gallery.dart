@@ -1,9 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:snapped/utils/color.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:share/share.dart';
+import 'package:snapped/utils/color.dart';
 
 class PickGallery extends StatefulWidget {
   final Id;
@@ -60,52 +59,52 @@ class _PickGalleryState extends State<PickGallery> {
         ),
       ),
       body: eventPickData != null
-          ? SingleChildScrollView(
-              child: Column(children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: StaggeredGridView.countBuilder(
-                    crossAxisCount: 4,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: eventPickData.length,
-                    shrinkWrap: true,
-                    staggeredTileBuilder: (int index) =>
-                        StaggeredTile.count(2, index.isEven ? 3 : 2),
-                    mainAxisSpacing: 16.0,
-                    crossAxisSpacing: 16.0,
-                    itemBuilder: (BuildContext context, int index) =>
-                        Stack(children: [
-                      Container(
-                        height: 270,
-                        child: ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                          child: Image.network(eventPickData[index]['url'],
-                              fit: BoxFit.cover),
-                        ),
+          ? Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: GridView.builder(
+                  itemCount: eventPickData.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: (40.0 / 38.0)),
+                  itemBuilder: (BuildContext context, int index) {
+                    return SingleChildScrollView(
+                      child: Stack(
+                        children: [
+                          SizedBox(
+                            height: 150,
+                            child: ClipRRect(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(15)),
+                              child: Image.network(eventPickData[index]['url'],
+                                  height: 155,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover),
+                            ),
+                          ),
+                          Positioned(
+                              bottom: 3,
+                              right: -10,
+
+                              child: SizedBox(
+                                  height: 27,
+                                  child: FloatingActionButton(
+                                      onPressed: () {
+                                        Share.share(
+                                            "Snapped Event Pick \n ${eventPickData[index]['url']}");
+                                      },
+                                      backgroundColor: Colors.black26,
+                                      elevation: 0,
+                                      child: const Icon(
+                                        Icons.share_rounded,
+                                        size: 15,
+                                        color: Colors.white,
+                                      ),),),),
+                        ],
                       ),
-                      Positioned(
-                          bottom: 5,
-                          // right: 0,
-                          left: 115,
-                          child: SizedBox(
-                              height: 30,
-                              child: FloatingActionButton(
-                                  onPressed: () {
-                                    Share.share(
-                                        "Snapped Event Pick \n ${eventPickData[index]['url']}");
-                                  },
-                                  backgroundColor: Colors.black45,
-                                  elevation: 0,
-                                  child: const Icon(
-                                    Icons.share_rounded,
-                                    size: 15,
-                                    color: Colors.white,
-                                  )))),
-                    ]),
-                  ),
-                ),
-              ]),
+                    );
+                  }),
             )
           : const Center(child: CircularProgressIndicator()),
     );

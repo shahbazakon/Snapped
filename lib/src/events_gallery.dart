@@ -19,8 +19,8 @@ class EventGallery extends StatefulWidget {
 }
 
 class EventGalleryState extends State<EventGallery> {
-  final userID;
 
+  final userID;
   EventGalleryState(this.userID);
 
   var eventUrl = "https://snapped.kiska.co.in/api/v1/getevents/";
@@ -86,7 +86,7 @@ class EventGalleryState extends State<EventGallery> {
                                 children: <Widget>[
                                   Padding(
                                     padding: const EdgeInsets.all(16.0),
-                                    child: Container(
+                                    child: SizedBox(
                                       height: 150,
                                       width: 320,
                                       child: ClipRRect(
@@ -113,76 +113,75 @@ class EventGalleryState extends State<EventGallery> {
                                         ),
                                         Text(
                                             'Type: ${eventData[index]['type']}',
-                                            style: TextStyle(fontSize: 14)),
+                                            style:
+                                                const TextStyle(fontSize: 14)),
                                       ],
                                     ),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          eventData[index]['date'],
-                                          style: secondaryTextStyle(size: 16),
-                                        ).expand(),
-                                        IconButton(
-                                            onPressed: () {
-                                              Share.share(
-                                                  "This is ${eventData[index]['name']} and you are invited for ${eventData[index]['type']}");
-                                            },
-                                            icon: const Icon(
-                                              Icons.share_rounded,
-                                              size: 20,
-                                            )),
-                                      ],
-                                    ),
+                                    child: Row(children: [
+                                      Text(
+                                        eventData[index]['date'],
+                                        style: secondaryTextStyle(size: 16),
+                                      ).expand(),
+                                      IconButton(
+                                          onPressed: () {
+                                            Share.share(
+                                                "This is ${eventData[index]['name']} and you are invited for ${eventData[index]['type']}");
+                                          },
+                                          icon: const Icon(
+                                            Icons.share_rounded,
+                                            size: 20,
+                                          )),
+                                    ]),
                                   )
                                 ],
                               ),
                               ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.white,
-                                  elevation: 4,
-                                  shape: const RoundedRectangleBorder(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.white,
+                                    elevation: 4,
+                                    shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                            bottomLeft: Radius.circular(10.0),
+                                            bottomRight:
+                                                Radius.circular(10.0))),
+                                    padding: const EdgeInsets.all(0.0),
+                                  ),
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                          begin: Alignment.centerLeft,
+                                          end: Alignment.centerRight,
+                                          colors: [
+                                            primaryColorLite,
+                                            primaryColorDark
+                                          ]),
                                       borderRadius: BorderRadius.only(
                                           bottomLeft: Radius.circular(10.0),
-                                          bottomRight: Radius.circular(10.0))),
-                                  padding: const EdgeInsets.all(0.0),
-                                ),
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    gradient: LinearGradient(
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                        colors: [
-                                          primaryColorLite,
-                                          primaryColorDark
-                                        ]),
-                                    borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(10.0),
-                                        bottomRight: Radius.circular(10.0)),
-                                  ),
-                                  child: const Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(18.0),
-                                      child: Text(
-                                        "View Snapps",
-                                        style: TextStyle(fontSize: 18),
-                                        textAlign: TextAlign.center,
+                                          bottomRight: Radius.circular(10.0)),
+                                    ),
+                                    child: const Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(18.0),
+                                        child: Text(
+                                          "View Snapps",
+                                          style: TextStyle(fontSize: 18),
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                onPressed: () {
-                                  int Id = eventData[index]['ID'];
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              PickGallery(Id: Id)));
-                                },
-                              )
+                                  onPressed: () {
+                                    var Id = eventData[index]['ID'];
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                PickGallery(Id: Id)));
+                                  })
                             ]),
                           ]),
                         ),
