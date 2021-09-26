@@ -1,10 +1,17 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:snapped/src/welcome.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:snapped/src/events_gallery.dart';
 import 'package:snapped/src/login.dart';
+import 'package:snapped/src/welcome.dart';
+import 'package:snapped/utils/constants.dart';
 
-void main() => runApp(MyApp());
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Constants.prefs = await SharedPreferences.getInstance();
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -14,13 +21,21 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        textTheme:GoogleFonts.latoTextTheme(textTheme).copyWith(
+        textTheme: GoogleFonts.latoTextTheme(textTheme).copyWith(
           bodyText1: GoogleFonts.montserrat(textStyle: textTheme.bodyText1),
         ),
       ),
       debugShowCheckedModeBanner: false,
       // home: ,
-      home: const WelcomePage(title: '',),
+      home: Constants.prefs?.getBool('loggedIn') == true
+          ? EventGallery(userID: 1/*Constants.userid?.getInt('UserID')*/,)
+          : const WelcomePage(
+              title: 'Snapped',
+            ),
+      routes: {
+        '/login': (context) => LoginPage(title: ''),
+        '/event': (BuildContext context) =>  EventGallery(userID: 1/*Constants.userid?.getInt('UserID')*/),
+      },
     );
   }
 }

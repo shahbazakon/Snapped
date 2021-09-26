@@ -6,6 +6,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:share/share.dart';
 import 'package:snapped/src/pick_gallery.dart';
 import 'package:snapped/utils/color.dart';
+import 'package:snapped/utils/constants.dart';
 
 import 'Widget/widgets.dart';
 
@@ -30,13 +31,16 @@ class EventGalleryState extends State<EventGallery> {
   void initState() {
     super.initState();
     getData();
+    print("USER ID: $userID");
+
   }
 
   Future<void> getData() async {
     await Future.delayed(const Duration(seconds: 2));
+    print("USERID: $userID");
     var res = await Dio().get(eventUrl,
         options: Options(headers: {
-          "user": userID,
+          "user": 1/*userID*/,
         }));
     eventData = res.data;
     setState(() {});
@@ -92,8 +96,8 @@ class EventGalleryState extends State<EventGallery> {
                                       child: ClipRRect(
                                         borderRadius:
                                             BorderRadius.circular(10.0),
-                                        child: Image.asset(
-                                            "assets/eventpick.jpg",
+                                        child: Image.network(
+                                            eventData[index]['url'],
                                             fit: BoxFit.cover),
                                       ),
                                     ),
@@ -112,7 +116,7 @@ class EventGalleryState extends State<EventGallery> {
                                               .expand(),
                                         ),
                                         Text(
-                                            'Type: ${eventData[index]['type']}',
+                                            'Host: ${eventData[index]['host']}',
                                             style:
                                                 const TextStyle(fontSize: 14)),
                                       ],
@@ -123,13 +127,13 @@ class EventGalleryState extends State<EventGallery> {
                                         horizontal: 16),
                                     child: Row(children: [
                                       Text(
-                                        eventData[index]['date'],
+                                        eventData[index]['date'].toString().substring(0,10),
                                         style: secondaryTextStyle(size: 16),
                                       ).expand(),
                                       IconButton(
                                           onPressed: () {
                                             Share.share(
-                                                "This is ${eventData[index]['name']} and you are invited for ${eventData[index]['type']}");
+                                                "This is ${eventData[index]['name']} and you are invited for ${eventData[index]['host']}");
                                           },
                                           icon: const Icon(
                                             Icons.share_rounded,

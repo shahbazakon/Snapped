@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:snapped/utils/color.dart';
+import 'package:snapped/utils/constants.dart';
 
 Widget snappedTitle() {
   return RichText(
@@ -70,13 +71,14 @@ class snappedAppBarState extends State<snappedAppBar> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                // IconButton(
-                //   icon: Icon(Icons.arrow_back),
-                //   color: Colors.white,
-                //   onPressed: () {
-                //     finish(context);
-                //   },
-                // ),
+                IconButton(
+                  icon: Icon(Icons.exit_to_app_rounded),
+                  color: Colors.white,
+                  onPressed: () {
+                    Constants.prefs?.setBool('loggedIn', false);
+                    Navigator.pushReplacementNamed(context, '/login');
+                  },
+                ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
                   child: Center(
