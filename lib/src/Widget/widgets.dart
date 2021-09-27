@@ -90,11 +90,16 @@ class snappedAppBarState extends State<snappedAppBar> {
                 )
               ]
             ),
-            Container(
-              margin: const EdgeInsets.only(right: 20, top: 8),
-              child: const CircleAvatar(
-                backgroundImage: AssetImage("assets/user.png"),
-                radius: 20,
+            GestureDetector(
+              onTap: (){
+                Scaffold.of(context).openEndDrawer();
+              },
+              child: Container(
+                margin: const EdgeInsets.only(right: 20, top: 8),
+                child: const CircleAvatar(
+                  backgroundImage: AssetImage("assets/user.png"),
+                  radius: 20,
+                ),
               ),
             ),
           ]

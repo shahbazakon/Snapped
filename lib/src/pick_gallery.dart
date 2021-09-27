@@ -4,6 +4,7 @@ import 'package:nb_utils/nb_utils.dart';
 import 'package:share/share.dart';
 import 'package:snapped/utils/color.dart';
 
+import 'Widget/no_item_found.dart';
 import 'img_full_preview.dart';
 
 class PickGallery extends StatefulWidget {
@@ -65,7 +66,7 @@ class _PickGalleryState extends State<PickGallery> {
         onRefresh: getPick,
             child: Padding(
                 padding: const EdgeInsets.all(10.0),
-                child: GridView.builder(
+                child: eventPickData.length==0 ? const NoItemFound():GridView.builder(
                     itemCount: eventPickData.length,
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,

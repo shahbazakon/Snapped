@@ -29,11 +29,11 @@ class NoItemFoundState extends State<NoItemFound> {
                 width: 250,
                 child: Column(
                   children: <Widget>[
-                    const Text("No Snapps Found", style: TextStyle(
+                    const Text("You Currently Have No event", style: TextStyle(
                         color: Colors.black, fontWeight: FontWeight.bold
                     )),
                     Container(height: 5),
-                    const Text("Weight for the Host to Shear", textAlign: TextAlign.center, style: TextStyle(
+                    const Text("Wait for the Host to Share", textAlign: TextAlign.center, style: TextStyle(
                         color: Colors.grey
                     )),
                   ],
