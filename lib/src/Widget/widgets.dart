@@ -10,7 +10,6 @@ Widget snappedTitle() {
     text: TextSpan(
         text: 'SN',
         style: GoogleFonts.portLligatSans(
-          // textStyle: Theme.of(context).textTheme.display1,
           fontSize: 30,
           fontWeight: FontWeight.w700,
           color: primaryColorLite,
@@ -80,7 +79,7 @@ class snappedAppBarState extends State<snappedAppBar> {
                   },
                 ),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
                   child: Center(
                     child: Text(
                       widget.titleName,
@@ -89,7 +88,7 @@ class snappedAppBarState extends State<snappedAppBar> {
                     ),
                   ),
                 )
-              ],
+              ]
             ),
             Container(
               margin: const EdgeInsets.only(right: 20, top: 8),
@@ -98,30 +97,10 @@ class snappedAppBarState extends State<snappedAppBar> {
                 radius: 20,
               ),
             ),
-          ],
+          ]
         ),
       ),
     );
   }
 }
 
-// class RefreshWidget extends StatefulWidget {
-//   final Widget child;
-//   final Future Function() onRefresh;
-//
-//   const RefreshWidget({Key? key, required this.onRefresh, required this.child})
-//       : super(key: key);
-//
-//   @override
-//   _RefreshWidgetState createState() => _RefreshWidgetState();
-// }
-//
-// class _RefreshWidgetState extends State<RefreshWidget> {
-//   @override
-//   Widget build(BuildContext context) => buildAndroidList();
-//
-//   Widget buildAndroidList() => RefreshIndicator(
-//         onRefresh: widget.onRefresh,
-//         child: widget.child,
-//       );
-// }

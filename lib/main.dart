@@ -9,6 +9,7 @@ import 'package:snapped/utils/constants.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Constants.prefs = await SharedPreferences.getInstance();
+  Constants.userid = await SharedPreferences.getInstance();
 
   runApp(MyApp());
 }
@@ -26,15 +27,17 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      // home: ,
+      // home: const WelcomePage(
+      //       title: 'Snapped',
+      //     ),
       home: Constants.prefs?.getBool('loggedIn') == true
-          ? EventGallery(userID: 1/*Constants.userid?.getInt('UserID')*/,)
+          ? EventGallery(userID: Constants.userid?.getInt('UserID'),)
           : const WelcomePage(
               title: 'Snapped',
             ),
       routes: {
         '/login': (context) => LoginPage(title: ''),
-        '/event': (BuildContext context) =>  EventGallery(userID: 1/*Constants.userid?.getInt('UserID')*/),
+        '/event': (BuildContext context) =>  EventGallery(userID: Constants.userid?.getInt('UserID')),
       },
     );
   }

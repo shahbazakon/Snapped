@@ -18,10 +18,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+
   bool _isObscure = true;
+  bool isVisible = false;
   TextEditingController passwordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
-  bool isVisible = false;
 
   Widget _entryField(String title, TextEditingController MyController) {
     return Container(
@@ -96,15 +97,9 @@ class _LoginPageState extends State<LoginPage> {
           });
         }
         if(userRes.data['code'] == '1'){
-
           Constants.prefs?.setBool('loggedIn', true);
           var userID = userRes.data['userID'];
-
           Constants.userid?.setInt('UserID', userID);
-
-          print("USERID :${userID.runtimeType}");
-
-          print("GET USER ID :${Constants.userid?.getInt('UserID')}");
 
           EventGallery(userID: userID);
           Navigator.pushReplacementNamed(context,'/event');

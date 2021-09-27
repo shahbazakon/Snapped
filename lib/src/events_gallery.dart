@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:share/share.dart';
+import 'package:snapped/src/Widget/no_item_found.dart';
 import 'package:snapped/src/pick_gallery.dart';
 import 'package:snapped/utils/color.dart';
 import 'package:snapped/utils/constants.dart';
@@ -27,6 +30,7 @@ class EventGalleryState extends State<EventGallery> {
   var eventUrl = "https://snapped.kiska.co.in/api/v1/getevents/";
   var eventData;
 
+
   @override
   void initState() {
     super.initState();
@@ -40,7 +44,7 @@ class EventGalleryState extends State<EventGallery> {
     print("USERID: $userID");
     var res = await Dio().get(eventUrl,
         options: Options(headers: {
-          "user": 1/*userID*/,
+          "user": userID,
         }));
     eventData = res.data;
     setState(() {});
@@ -72,7 +76,7 @@ class EventGalleryState extends State<EventGallery> {
                   ? RefreshIndicator(
                       onRefresh: getData,
                       strokeWidth: 2.5,
-                      child: ListView.builder(
+                      child: eventData.length==0 ? const NoItemFound():ListView.builder(
                         scrollDirection: Axis.vertical,
                         itemCount: eventData.length,
                         shrinkWrap: true,
@@ -191,7 +195,7 @@ class EventGalleryState extends State<EventGallery> {
                         ),
                       ),
                     )
-                  : const Center(child: CircularProgressIndicator()),
+                  : const Center(child: CircularProgressIndicator())
             )
           ]),
         ]),
