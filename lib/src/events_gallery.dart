@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:share/share.dart';
 import 'package:snapped/src/Widget/no_item_found.dart';
+import 'package:snapped/src/edit_profile.dart';
 import 'package:snapped/src/pick_gallery.dart';
 import 'package:snapped/utils/color.dart';
 import 'package:snapped/utils/constants.dart';
@@ -68,7 +69,7 @@ class EventGalleryState extends State<EventGallery> {
             DrawerHeader(
               decoration: const BoxDecoration(color: primaryColorDark),
               child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -90,19 +91,27 @@ class EventGalleryState extends State<EventGallery> {
                                 fontSize: 14.0,),
                           ),
                         ])
+                    ,IconButton(onPressed: (){
+                      MaterialPageRoute(builder: (context)=>const EditProfile());
+                    }, icon: const Icon(Icons.edit_rounded,color: primaryColorLite,),alignment: Alignment.bottomRight,)
                   ]),
             ),
 
 
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings', style: TextStyle(fontSize: 18)),
-              onTap: () {
-                // Here you can give your route to navigate
 
-              },
-            ),
-            Divider(height: 3.0),
+            // ListTile(
+            //   leading: const Icon(Icons.settings),
+            //   title: const Text('Settings', style: TextStyle(fontSize: 18)),
+            //   onTap: () {
+            //     // Here you can give your route to navigate
+            //
+            //   },
+            // ),
+
+
+
+
+            const Divider(height: 3.0),
             ListTile(
               leading: const Icon(Icons.close),
               title: const Text('Close Drawer', style: TextStyle(fontSize: 18)),
@@ -128,7 +137,7 @@ class EventGalleryState extends State<EventGallery> {
             ),
           ),
           Column(children: <Widget>[
-            snappedAppBar("Events Gallery"),
+            snappedAppBar("Event Gallery"),
             Expanded(
                 child: eventData != null
                     ? RefreshIndicator(
@@ -244,7 +253,7 @@ class EventGalleryState extends State<EventGallery> {
                                               child: Padding(
                                                 padding: EdgeInsets.all(18.0),
                                                 child: Text(
-                                                  "View Snapps",
+                                                  "View Event Pictures",
                                                   style:
                                                       TextStyle(fontSize: 18),
                                                   textAlign: TextAlign.center,

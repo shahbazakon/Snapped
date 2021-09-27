@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:snapped/utils/color.dart';
 
 
 class NoItemFound extends StatefulWidget {
@@ -16,6 +17,14 @@ class NoItemFoundState extends State<NoItemFound> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.refresh_rounded),
+          splashColor: primaryColorLite,
+          backgroundColor: primaryColorDark,
+          onPressed: (){
+            Navigator.pushNamed(context,'/event');
+          },
+        ),
         body: Stack(
           children: <Widget>[
             Align(
