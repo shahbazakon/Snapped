@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:snapped/utils/color.dart';
 
@@ -18,6 +21,9 @@ class _EditProfileState extends State<EditProfile> {
   final userID;
 
   _EditProfileState(this.userID);
+
+  PickedFile? _profilePick;
+  final ImagePicker _picker = ImagePicker();
 
   bool successVisible = false;
 
@@ -39,6 +45,7 @@ class _EditProfileState extends State<EditProfile> {
     userDetails = userdetailsRes.data;
     setState(() {});
   }
+
 // ======================================================= SCAFFOLD START ===========================================================================
   @override
   Widget build(BuildContext context) {
@@ -70,8 +77,10 @@ class _EditProfileState extends State<EditProfile> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       // MAIN LOGO
-                      SnappedLogo(),
+                      // SnappedLogo(),
+                      ProfilePicture(),
                       const SizedBox(height: 16),
+
                       // USERNAME FIELD
                       TextField(userDetails[0]['username'], "Username",
                           UsernameController),
@@ -81,7 +90,7 @@ class _EditProfileState extends State<EditProfile> {
                       // SAVE DETAILS BUTTON
                       passwordField(),
                       // SAVE DETAILS BUTTON
-                      profileEditMsg(),
+                      /*profileEditMsg(),*/
                       GestureDetector(
                         onTap: () async {
                           //PUT REQUEST TO EDIT PROFILE
@@ -137,6 +146,81 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   // =======================================================WIDGETS WORKING===========================================================================
+
+  Widget ProfilePicture() {
+    return Center(
+      child: Stack(children: [
+        CircleAvatar(
+          radius: 60.0,
+          backgroundImage: _profilePick == null
+              ? AssetImage('assets/user.png')
+              : FileImage(File(_profilePick!.path)) as ImageProvider,
+        ),
+        Positioned(
+          bottom: 4,
+          right: 4,
+          child: SizedBox(
+            height: 30,
+            width: 30,
+            child: FloatingActionButton(
+              onPressed: () {
+                showModalBottomSheet(
+                    context: context, builder: ((builder) => bottomSheet()));
+              },
+              backgroundColor: Colors.blue,
+              elevation: 0,
+              child: const Icon(
+                Icons.add_a_photo_outlined,
+                size: 20,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        )
+      ]),
+    );
+  }
+
+  Widget bottomSheet() {
+    return Container(
+      height: 100.0,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.all(20),
+      child: Column(
+        children: [
+          const Text(
+            "Choose Profile photo",
+            style: TextStyle(fontSize: 20.0),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              FlatButton.icon(
+                  onPressed: () async {
+                    final pickedfile =
+                        await _picker.getImage(source: ImageSource.camera);
+                    setState(() {
+                      _profilePick = pickedfile;
+                    });
+                  },
+                  icon: const Icon(Icons.camera_sharp),
+                  label: const Text("Camara")),
+              FlatButton.icon(
+                  onPressed: () async {
+                    final pickedfile =
+                        await _picker.getImage(source: ImageSource.gallery);
+                    setState(() {
+                      _profilePick = pickedfile;
+                    });
+                  },
+                  icon: const Icon(Icons.image_rounded),
+                  label: const Text("Gallery"))
+            ],
+          )
+        ],
+      ),
+    );
+  }
 
   Padding profileEditMsg() {
     return Padding(
