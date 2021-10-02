@@ -14,13 +14,9 @@ class EditProfile extends StatefulWidget {
   _EditProfileState createState() => _EditProfileState(userID);
 }
 
-
-
-
-
-
 class _EditProfileState extends State<EditProfile> {
   final userID;
+
   _EditProfileState(this.userID);
 
   bool successVisible = false;
@@ -43,7 +39,7 @@ class _EditProfileState extends State<EditProfile> {
     userDetails = userdetailsRes.data;
     setState(() {});
   }
-
+// ======================================================= SCAFFOLD START ===========================================================================
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,112 +55,137 @@ class _EditProfileState extends State<EditProfile> {
             },
           ),
           title: Text(
-            "Events Pictures",
+            "Edit Profile",
             maxLines: 2,
             style: boldTextStyle(size: 22, color: primaryColorDark),
           ),
         ),
 
         // EDIT PROFILE BODY
-        body:userDetails==null? const Center(child: CircularProgressIndicator()) : SingleChildScrollView(
-          child: Form(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(18),
-                  child: Image.asset('assets/snappedLogo.png',height: 80,),
-                ),
-                const SizedBox(height: 16),
-                TextField(userDetails[0]['username'], "Username", UsernameController),
-                TextField(userDetails[0]['email'], "Email", EmailController),
-                // SAVE DETAISLS BUTTON
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-                  child: Expanded(
-                    child: AppTextField(
-                      textStyle:
-                          primaryTextStyle(weight: FontWeight.bold, size: 18),
-                      textFieldType: TextFieldType.PASSWORD,
-                      cursorColor: primaryColorDark,
-                      controller: PasswordController,
-                      decoration: const InputDecoration(
-                        labelText: "password",
-                        hintText: "New Password",
-                        labelStyle: TextStyle(color: primaryColorDark),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: primaryColorLite, width: 1.5)),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: grey, width: 0.5)),
+        body: userDetails == null
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                child: Form(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // MAIN LOGO
+                      SnappedLogo(),
+                      const SizedBox(height: 16),
+                      // USERNAME FIELD
+                      TextField(userDetails[0]['username'], "Username",
+                          UsernameController),
+                      // EMAIL FIELD
+                      TextField(
+                          userDetails[0]['email'], "Email", EmailController),
+                      // SAVE DETAILS BUTTON
+                      passwordField(),
+                      // SAVE DETAILS BUTTON
+                      profileEditMsg(),
+                      GestureDetector(
+                        onTap: () async {
+                          //PUT REQUEST TO EDIT PROFILE
+                          print(
+                              '1: ${UsernameController.text}\n 2: ${EmailController.text}\n 3: ${PasswordController.text}');
+                          await editProfileDetails(
+                            UsernameController.text,
+                            EmailController.text,
+                            PasswordController.text,
+                          ).editDetails(userID);
+                          // SHOW SUCCESS MESSAGE
+                          setState(() {
+                            successVisible = true;
+                          });
+                          await Future.delayed(const Duration(seconds: 4));
+
+                          //MODE TO EVENT PAGE
+                          Navigator.pushNamed(context, '/event');
+                        },
+                        child: Container(
+                          // width: MediaQuery.of(context).size.width,
+                          alignment: Alignment.center,
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 22, vertical: 10),
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(5)),
+                              boxShadow: <BoxShadow>[
+                                BoxShadow(
+                                    color: Colors.grey.shade200,
+                                    offset: const Offset(2, 4),
+                                    blurRadius: 5,
+                                    spreadRadius: 2)
+                              ],
+                              gradient: const LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: [
+                                    Color(0xFF4CAAFF),
+                                    Color(0xff06468e)
+                                  ])),
+                          child: const Text(
+                            'Save Details',
+                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
+              ));
+  }
 
-                // SAVE DETAISLS BUTTON
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Visibility(
-                    visible: successVisible,
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        "Account details is Successfully Saved",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold),
-                      ),
-                    ),),
-                ),
-          GestureDetector(
-            onTap: () async {
-              //PUT REQUEST TO EDIT PROFILE
-              print(
-                  '1: ${UsernameController.text}\n 2: ${EmailController.text}\n 3: ${PasswordController.text}');
-              await editProfileDetails(
-                UsernameController.text,
-                EmailController.text,
-                PasswordController.text,
-              )
-                  .editDetails(userID);
-              // SHOW SUCCESS MESSAGE
-              setState(() {
-                successVisible = true;
-              });
-              await Future.delayed(const Duration(seconds: 4));
+  // =======================================================WIDGETS WORKING===========================================================================
 
-              //MODE TO EVENT PAGE
-              Navigator.pushNamed(context,'/event');
-            },
-            child: Container(
-              // width: MediaQuery.of(context).size.width,
-              alignment: Alignment.center,
-              margin: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-              padding: const EdgeInsets.symmetric(vertical: 15),
-              decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(5)),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                        color: Colors.grey.shade200,
-                        offset: const Offset(2, 4),
-                        blurRadius: 5,
-                        spreadRadius: 2)
-                  ],
-                  gradient: const LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [Color(0xFF4CAAFF), Color(0xff06468e)])),
-              child: const Text(
-                'Save Details',
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              ),
-            ),
+  Padding profileEditMsg() {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Visibility(
+        visible: successVisible,
+        child: const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            "Account details is Successfully Saved",
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
           ),
-              ],
-            ),
+        ),
+      ),
+    );
+  }
+
+  Padding passwordField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+      child: Expanded(
+        child: AppTextField(
+          textStyle: primaryTextStyle(weight: FontWeight.bold, size: 18),
+          textFieldType: TextFieldType.PASSWORD,
+          cursorColor: primaryColorDark,
+          controller: PasswordController,
+          decoration: const InputDecoration(
+            labelText: "password",
+            hintText: "New Password",
+            labelStyle: TextStyle(color: primaryColorDark),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: primaryColorLite, width: 1.5)),
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: grey, width: 0.5)),
           ),
-        ));
+        ),
+      ),
+    );
+  }
+
+  Padding SnappedLogo() {
+    return Padding(
+      padding: const EdgeInsets.all(18),
+      child: Image.asset(
+        'assets/snappedLogo.png',
+        height: 80,
+      ),
+    );
   }
 
   Padding TextField(
@@ -190,5 +211,3 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 }
-
-

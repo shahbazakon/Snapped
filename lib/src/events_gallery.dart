@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:share/share.dart';
-import 'package:snapped/src/Widget/no_item_found.dart';
+import 'package:snapped/src/no_item_found.dart';
 import 'package:snapped/src/edit_profile.dart';
 import 'package:snapped/src/pick_gallery.dart';
 import 'package:snapped/utils/color.dart';
@@ -148,7 +148,7 @@ class EventGalleryState extends State<EventGallery> {
                         onRefresh: getData,
                         strokeWidth: 2.5,
                         child: eventData.length == 0
-                            ? const NoItemFound()
+                            ? NoItemFound(ErrorMsg:"You Corrently Have No Event", ErrorSubMag:"Wait for the Host to Share")
                             : ListView.builder(
                                 scrollDirection: Axis.vertical,
                                 itemCount: eventData.length,
@@ -204,7 +204,7 @@ class EventGalleryState extends State<EventGallery> {
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 16),
+                                                horizontal: 16,vertical: 10),
                                             child: Row(children: [
                                               Text(
                                                 eventData[index]['date']
@@ -213,15 +213,15 @@ class EventGalleryState extends State<EventGallery> {
                                                 style: secondaryTextStyle(
                                                     size: 16),
                                               ).expand(),
-                                              IconButton(
-                                                  onPressed: () {
-                                                    Share.share(
-                                                        "This is ${eventData[index]['name']} and you are invited for ${eventData[index]['host']}");
-                                                  },
-                                                  icon: const Icon(
-                                                    Icons.share_rounded,
-                                                    size: 20,
-                                                  )),
+                                              // IconButton(
+                                              //     onPressed: () {
+                                              //       Share.share(
+                                              //           "This is ${eventData[index]['name']} and you are invited for ${eventData[index]['host']}");
+                                              //     },
+                                              //     icon: const Icon(
+                                              //       Icons.share_rounded,
+                                              //       size: 20,
+                                              //     )),
                                             ]),
                                           )
                                         ],

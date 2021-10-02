@@ -4,14 +4,19 @@ import 'package:snapped/utils/color.dart';
 
 
 class NoItemFound extends StatefulWidget {
-  const NoItemFound({Key? key}) : super(key: key);
+  final  String ErrorMsg,ErrorSubMag;
+  const NoItemFound( {Key? key, required this.ErrorMsg, required this.ErrorSubMag} ) : super(key: key);
+
 
   @override
-  NoItemFoundState createState() => NoItemFoundState();
+  NoItemFoundState createState() => NoItemFoundState(ErrorMsg,ErrorSubMag);
 }
 
 
 class NoItemFoundState extends State<NoItemFound> {
+  final String ErrorMsg;
+  final String ErrorSubMag;
+  NoItemFoundState(this.ErrorMsg,this.ErrorSubMag);
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +43,11 @@ class NoItemFoundState extends State<NoItemFound> {
                 width: 250,
                 child: Column(
                   children: <Widget>[
-                    const Text("You Currently Have No event", style: TextStyle(
+                    Text(ErrorMsg, style: const TextStyle(
                         color: Colors.black, fontWeight: FontWeight.bold
                     )),
                     Container(height: 5),
-                    const Text("Wait for the Host to Share", textAlign: TextAlign.center, style: TextStyle(
+                    Text(ErrorSubMag, textAlign: TextAlign.center, style: const TextStyle(
                         color: Colors.grey
                     )),
                   ],
@@ -54,4 +59,6 @@ class NoItemFoundState extends State<NoItemFound> {
     );
   }
 }
+
+
 

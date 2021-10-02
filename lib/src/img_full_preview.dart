@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:share/share.dart';
 import 'package:snapped/utils/color.dart';
@@ -40,17 +41,45 @@ class _FullPreviewState extends State<FullPreview> {
             tag: "pickTag",
             child: Image.network(pickURL, fit: BoxFit.cover)),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Share.share("Snapped Event Pick \n $pickURL");
-        },
-        backgroundColor: primaryColorLite,
-        elevation: 0,
-        child: const Icon(
-          Icons.share_rounded,
-          size: 30,
-          color: Colors.white,
-        ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () {String path = pickURL;
+            GallerySaver.saveImage(path)
+                .then((success) {
+              Fluttertoast.showToast(
+                  msg: "Image is saved",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1);
+              setState(() {
+                print('Image is saved');
+              });
+            });
+            },
+            backgroundColor: primaryColorDark,
+            elevation: 0,
+            child: const Icon(
+              Icons.download_rounded,
+              size: 30,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(width: 10),
+          FloatingActionButton(
+            onPressed: () {
+              Share.share("Snapped Event Pick \n $pickURL");
+            },
+            backgroundColor: primaryColorLite,
+            elevation: 0,
+            child: const Icon(
+              Icons.share_rounded,
+              size: 30,
+              color: Colors.white,
+            ),
+          ),
+        ],
       ),
     );
   }
