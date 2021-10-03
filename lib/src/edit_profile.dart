@@ -22,7 +22,7 @@ class _EditProfileState extends State<EditProfile> {
 
   _EditProfileState(this.userID);
 
-  PickedFile? _profilePick;
+  PickedFile? profilePick;
   final ImagePicker _picker = ImagePicker();
 
   bool successVisible = false;
@@ -93,10 +93,14 @@ class _EditProfileState extends State<EditProfile> {
                       /*profileEditMsg(),*/
                       GestureDetector(
                         onTap: () async {
+
+
+
                           //PUT REQUEST TO EDIT PROFILE
                           print(
-                              '1: ${UsernameController.text}\n 2: ${EmailController.text}\n 3: ${PasswordController.text}');
+                              '1: ${UsernameController.text}\n 2: ${EmailController.text}\n 3: ${PasswordController.text} \n $profilePick');
                           await editProfileDetails(
+                            profilePick,
                             UsernameController.text,
                             EmailController.text,
                             PasswordController.text,
@@ -152,9 +156,9 @@ class _EditProfileState extends State<EditProfile> {
       child: Stack(children: [
         CircleAvatar(
           radius: 60.0,
-          backgroundImage: _profilePick == null
-              ? AssetImage('assets/user.png')
-              : FileImage(File(_profilePick!.path)) as ImageProvider,
+          backgroundImage: profilePick == null
+              ? NetworkImage(userDetails[0]['img'])
+              : FileImage(File(profilePick!.path)) as ImageProvider,
         ),
         Positioned(
           bottom: 4,
@@ -200,7 +204,7 @@ class _EditProfileState extends State<EditProfile> {
                     final pickedfile =
                         await _picker.getImage(source: ImageSource.camera);
                     setState(() {
-                      _profilePick = pickedfile;
+                      profilePick = pickedfile;
                     });
                   },
                   icon: const Icon(Icons.camera_sharp),
@@ -210,7 +214,7 @@ class _EditProfileState extends State<EditProfile> {
                     final pickedfile =
                         await _picker.getImage(source: ImageSource.gallery);
                     setState(() {
-                      _profilePick = pickedfile;
+                      profilePick = pickedfile;
                     });
                   },
                   icon: const Icon(Icons.image_rounded),
