@@ -5,6 +5,8 @@ import 'API Request/post.dart';
 import 'Widget/bezier_container.dart';
 import 'Widget/widgets.dart';
 import 'login.dart';
+import 'package:email_auth/email_auth.dart';
+
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key, required this.title}) : super(key: key);
@@ -18,8 +20,11 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   bool successVisible = false;
   bool ErrorVisible = false;
+  bool _OTPsend = false;
+  bool _OTPerror = false;
   bool allreadyExciestVisible = false;
   bool _isObscure = true;
+
   TextEditingController userNameController = TextEditingController();
   TextEditingController emailIdController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -68,6 +73,33 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
+  Widget _OTPField(String title) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          const TextField(
+            style: TextStyle(color: primaryColorDark,fontSize: 20,fontWeight: FontWeight.bold),
+              keyboardType: TextInputType.number,
+              enabled: true,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(0),
+
+                suffix: TextButton(onPressed: null, child: Text("Send OTP",style: TextStyle(color: primaryColorDark,fontSize: 15,fontWeight: FontWeight.bold),)),
+              ))
+        ],
+      ),
+    );
+  }
+
 
   Widget _passwordntryField(String title, TextEditingController MyController) {
     return Container(
@@ -97,7 +129,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     },
                   ),
                   border: InputBorder.none,
-                  fillColor: Color(0xfff3f3f4),
+                  fillColor: const Color(0xfff3f3f4),
                   filled: true))
         ],
       ),
@@ -204,10 +236,36 @@ class _SignUpPageState extends State<SignUpPage> {
     return Column(
       children: <Widget>[
         _entryField("Username", userNameController),
-        _entryField("Email id", emailIdController),
         _passwordntryField("Password", passwordController),
+        _entryField("Email id", emailIdController),
+        _OTPField("OTP"),
+
       ],
     );
+  }
+
+  late EmailAuth emailAuth;
+  void sendOtp() async {
+    bool result = await emailAuth.sendOtp(
+        recipientMail: emailIdController.text, otpLength: 4);
+    if (result) {
+      setState(() {
+        print("OTP is sent");
+        _OTPsend = true;
+      });
+    }
+  }
+  void verify() {
+    bool EmailRes = emailAuth.validateOtp(
+        recipientMail: emailIdController.text,
+        userOtp: emailIdController.text);
+    if(EmailRes){
+      print('OTP varified');
+    }
+    else{
+      print('Wrong OTP');
+      _OTPerror = true;
+    }
   }
 
   @override
@@ -246,30 +304,61 @@ class _SignUpPageState extends State<SignUpPage> {
                         child: Text(
                           "Account is Successfully Created",
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.bold),
                         ),
-                      ),),
+                      ),
+                    ),
                     Visibility(
-                        visible: ErrorVisible,
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            "Error Occure",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold),
-                          ),
-                        ),),
-                    Visibility(
-                        visible: allreadyExciestVisible,
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            "User Already Exciest",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold),
-                          ),
-                        ),),
+                      visible: _OTPsend,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          "OTP Send Successfully",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
 
+                    Visibility(
+                      visible: _OTPerror,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          "Wrong OTP , Try Again",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: ErrorVisible,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          "Error Occure",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+
+                    Visibility(
+                      visible: allreadyExciestVisible,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          "User Already Exciest",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
                     _submitButton(),
                     SizedBox(height: height * .14),
                     _loginAccountLabel(),
