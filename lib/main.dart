@@ -33,8 +33,8 @@ class MyApp extends StatelessWidget {
       home: Constants.prefs?.getBool('loggedIn') == true
           ? EventGallery(userID: Constants.userid?.getInt('UserID'),)
           : const WelcomePage(
-              title: 'Snapped',
-            ),
+        title: 'Snapped',
+      ),
       routes: {
         '/login': (context) => LoginPage(title: ''),
         '/event': (BuildContext context) =>  EventGallery(userID: Constants.userid?.getInt('UserID')),

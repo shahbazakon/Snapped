@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,16 +19,21 @@ class EditProfile extends StatefulWidget {
 class _EditProfileState extends State<EditProfile> {
   final userID;
 
+
   _EditProfileState(this.userID);
 
   PickedFile? profilePick;
   final ImagePicker _picker = ImagePicker();
 
   bool successVisible = false;
+  bool passwordValidation = false;
+  bool wrongPassword = false;
+
 
   TextEditingController UsernameController = TextEditingController();
   TextEditingController EmailController = TextEditingController();
-  TextEditingController PasswordController = TextEditingController();
+  TextEditingController newPasswordController = TextEditingController();
+  TextEditingController oldPasswordController = TextEditingController();
 
   var GETuserdetails = "https://snapped.kiska.co.in/api/v1/getuserdetails/";
   var userDetails;
@@ -50,7 +54,7 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // APP BAR
+      // APP BAR
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
@@ -72,81 +76,115 @@ class _EditProfileState extends State<EditProfile> {
         body: userDetails == null
             ? const Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
-                child: Form(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // MAIN LOGO
-                      // SnappedLogo(),
-                      ProfilePicture(),
-                      const SizedBox(height: 16),
+          child: Form(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // MAIN LOGO
+                // SnappedLogo(),
+                ProfilePicture(),
+                const SizedBox(height: 16),
 
-                      // USERNAME FIELD
-                      TextField(userDetails[0]['username'], "Username",
-                          UsernameController),
-                      // EMAIL FIELD
-                      TextField(
-                          userDetails[0]['email'], "Email", EmailController),
-                      // SAVE DETAILS BUTTON
-                      passwordField(),
-                      // SAVE DETAILS BUTTON
-                      /*profileEditMsg(),*/
-                      GestureDetector(
-                        onTap: () async {
+                // USERNAME FIELD
+                TextField(userDetails[0]['username'], "Username",
+                    UsernameController),
+                // EMAIL FIELD
+                TextField(
+                    userDetails[0]['email'], "Email", EmailController),
+                // SAVE DETAILS BUTTON
+                newPasswordField(),
+                oldPasswordField(),
 
+                // SAVE DETAILS BUTTON
+                profileEditMsg("Account details is Successfully Saved",Colors.green,successVisible),
+                GestureDetector(
+                  onTap: () async {
+                    //PUT REQUEST TO EDIT PROFILE
+                    if(oldPasswordController.text.isEmpty == false){
+                      print(
+                          '1: ${UsernameController.text}\n 2: ${EmailController.text}\n 3: ${newPasswordController.text} \n 4: ${oldPasswordController.text} \n $profilePick');
+                      var editRes  = await editProfileDetails(
+                        profilePick,
+                        UsernameController.text,
+                        EmailController.text,
+                        newPasswordController.text,
+                        oldPasswordController.text
+                      ).editDetails(userID);
+                      // SHOW SUCCESS MESSAGE
+                      if(editRes==1){
+                        setState(() {
+                          successVisible = true;
+                        });
+                        await Future.delayed(const Duration(seconds: 4));
+                        //MODE TO EVENT PAGE
+                        Navigator.pushNamed(context, '/event');
+                      }
+                      if(editRes==-5){
+                          Fluttertoast.showToast(
+                              msg: "Old Password Not Match",
+                              textColor: Colors.red,
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1);
 
+                      }
+                      else{
+                        Fluttertoast.showToast(
+                            msg: "Error! Try Again",
+                            textColor: Colors.red,
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1);
 
-                          //PUT REQUEST TO EDIT PROFILE
-                          print(
-                              '1: ${UsernameController.text}\n 2: ${EmailController.text}\n 3: ${PasswordController.text} \n $profilePick');
-                          await editProfileDetails(
-                            profilePick,
-                            UsernameController.text,
-                            EmailController.text,
-                            PasswordController.text,
-                          ).editDetails(userID);
-                          // SHOW SUCCESS MESSAGE
-                          setState(() {
-                            successVisible = true;
-                          });
-                          await Future.delayed(const Duration(seconds: 4));
+                      }
 
-                          //MODE TO EVENT PAGE
-                          Navigator.pushNamed(context, '/event');
-                        },
-                        child: Container(
-                          // width: MediaQuery.of(context).size.width,
-                          alignment: Alignment.center,
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 22, vertical: 10),
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(5)),
-                              boxShadow: <BoxShadow>[
-                                BoxShadow(
-                                    color: Colors.grey.shade200,
-                                    offset: const Offset(2, 4),
-                                    blurRadius: 5,
-                                    spreadRadius: 2)
-                              ],
-                              gradient: const LinearGradient(
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                  colors: [
-                                    Color(0xFF4CAAFF),
-                                    Color(0xff06468e)
-                                  ])),
-                          child: const Text(
-                            'Save Details',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
+                    }
+                    else{
+                      setState(() {
+                        Fluttertoast.showToast(
+                            msg: "Old Password Not Found",
+                            textColor: Colors.red,
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1);
+                        passwordValidation = true;
+                      });
+                    }
+
+                  },
+                  child: Container(
+                    // width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.center,
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 22, vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    decoration: BoxDecoration(
+                        borderRadius:
+                        const BorderRadius.all(Radius.circular(5)),
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                              color: Colors.grey.shade200,
+                              offset: const Offset(2, 4),
+                              blurRadius: 5,
+                              spreadRadius: 2)
+                        ],
+                        gradient: const LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Color(0xFF4CAAFF),
+                              Color(0xff06468e)
+                            ])),
+                    child: const Text(
+                      'Save Details',
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
                   ),
                 ),
-              ));
+              ],
+            ),
+          ),
+        ));
   }
 
   // =======================================================WIDGETS WORKING===========================================================================
@@ -202,7 +240,7 @@ class _EditProfileState extends State<EditProfile> {
               FlatButton.icon(
                   onPressed: () async {
                     final pickedfile =
-                        await _picker.getImage(source: ImageSource.camera);
+                    await _picker.getImage(source: ImageSource.camera);
                     setState(() {
                       profilePick = pickedfile;
                     });
@@ -212,7 +250,7 @@ class _EditProfileState extends State<EditProfile> {
               FlatButton.icon(
                   onPressed: () async {
                     final pickedfile =
-                        await _picker.getImage(source: ImageSource.gallery);
+                    await _picker.getImage(source: ImageSource.gallery);
                     setState(() {
                       profilePick = pickedfile;
                     });
@@ -226,24 +264,24 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Padding profileEditMsg() {
+  Padding profileEditMsg(String Msg,Color mycolor, bool isvisible) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Visibility(
-        visible: successVisible,
-        child: const Padding(
-          padding: EdgeInsets.all(8.0),
+        visible: isvisible,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
           child: Text(
-            "Account details is Successfully Saved",
+            Msg,
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+            style: TextStyle(color: mycolor, fontWeight: FontWeight.bold),
           ),
         ),
       ),
     );
   }
 
-  Padding passwordField() {
+  Padding newPasswordField() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
       child: Expanded(
@@ -251,15 +289,42 @@ class _EditProfileState extends State<EditProfile> {
           textStyle: primaryTextStyle(weight: FontWeight.bold, size: 18),
           textFieldType: TextFieldType.PASSWORD,
           cursorColor: primaryColorDark,
-          controller: PasswordController,
+          controller: newPasswordController,
           decoration: const InputDecoration(
-            labelText: "password",
+            labelText: "New password",
             hintText: "New Password",
             labelStyle: TextStyle(color: primaryColorDark),
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: primaryColorLite, width: 1.5)),
             enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: grey, width: 0.5)),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Padding oldPasswordField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+      child: Expanded(
+        child: AppTextField(
+          textStyle: primaryTextStyle(weight: FontWeight.bold, size: 18),
+          textFieldType: TextFieldType.PASSWORD,
+          cursorColor: primaryColorDark,
+          controller: oldPasswordController,
+          decoration: InputDecoration(
+            labelText: "Old password*",
+            hintText: "Old Password*",
+            errorText: passwordValidation ? "Please Enter Old password" : null,
+            errorStyle: const TextStyle(color: Colors.red,fontWeight: FontWeight.bold,),
+            errorBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.red, width: 1.5)),
+            focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: primaryColorLite, width: 1.5)),
+            enabledBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: grey, width: 0.5)),
+            labelStyle: const TextStyle(color: primaryColorDark),
           ),
         ),
       ),

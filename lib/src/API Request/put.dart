@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,14 +8,16 @@ class editProfileDetails {
   PickedFile? profilePick;
   String? UsernameController;
   String? EmailController;
-  String? PasswordController;
+  String? newPasswordController;
+  String? oldPasswordController;
 
 
   editProfileDetails(
       this.profilePick,
       this.UsernameController,
       this.EmailController,
-      this.PasswordController,
+      this.newPasswordController,
+      this.oldPasswordController
       );
 
   editDetails(userId) async {
@@ -29,34 +32,34 @@ class editProfileDetails {
 
     try {
 
-      // FormData formData = FormData.fromMap({
-      //   "img": await MultipartFile.fromFile(
-      //     profilePick!.path,
-      //     filename: fileName,
-      //   ),
-      //   'username': UsernameController,
-      //   'email' : EmailController,
-      //   'password' : PasswordController,
-      // });
+      List<int> imageBytes = await profilePick!.readAsBytes();
+      String base64Image = base64Encode(imageBytes);
+    print('IMAGE : $base64Image');
 
       var formData = {
       'username': UsernameController,
       'email' : EmailController,
-      'password' : PasswordController,
-       'img': await MultipartFile.fromFile(
+      'password' : oldPasswordController,
+      'newpassword' : newPasswordController,
+       // 'img': base64Image
+       /*await MultipartFile.fromFile(
           profilePick!.path,
           filename: fileName,
           contentType: MediaType("image", fileName.split(".").last),
-        ),
+        ),*/
       };
       var res = await Dio()
           .put('https://snapped.kiska.co.in/user/edit/$userId',
           data: formData)
           .then((response) {
         response.statusCode == 200
-            ? print("successful edit Profile Details ")
+            ? print("successful edit Profile Details ${response.data} ")
             : print("pset request is fail");
-      });
+
+        print("userID ${response.data["data"]} ");
+        return response.data;
+
+          });
     } on DioError catch (e) {
       if (e.response != null) {
         print(e.message);
@@ -64,7 +67,7 @@ class editProfileDetails {
         print(e.response!.headers);
         print(e.response);
       } else {
-        print("fail");
+        print("Dio Error Occur");
         print(e.message);
       }
     }

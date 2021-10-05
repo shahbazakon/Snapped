@@ -64,79 +64,79 @@ class EventGalleryState extends State<EventGallery> {
           child: userDetails == null
               ? const Center(child: CircularProgressIndicator())
               : ListView(children: [
-                  DrawerHeader(
-                    decoration: const BoxDecoration(color: primaryColorDark),
-                    child: Column(
-                      
+            DrawerHeader(
+              decoration: const BoxDecoration(color: primaryColorDark),
+              child: Column(
+
+                children: [
+                  CircleAvatar(
+                    radius: 40.0,
+                    backgroundImage:NetworkImage(userDetails[0]['img']),
+                    // userDetails[0]['img'] == null
+                    //     ? AssetImage('assets/user.png')
+                    //     : NetworkImage(userDetails[0]['img']) as ImageProvider,
+                  ),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CircleAvatar(
-                          radius: 40.0,
-                          backgroundImage:NetworkImage(userDetails[0]['img']),
-                          // userDetails[0]['img'] == null
-                          //     ? AssetImage('assets/user.png')
-                          //     : NetworkImage(userDetails[0]['img']) as ImageProvider,
-                        ),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      userDetails[0]['username'],
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                          fontSize: 25.0),
-                                    ),
-                                    const SizedBox(height: 10.0),
-                                    Text(
-                                      userDetails[0]['email'],
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                        fontSize: 14.0,
-                                      ),
-                                    ),
-                                  ]),
-                              IconButton(
-                                onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(
-                                      builder: (context) => EditProfile(userID : userID))
-                                  );
-                                },
-                                icon: const Icon(
-                                  Icons.edit_rounded,
-                                  color: primaryColorLite,
+                        Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                userDetails[0]['username'],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 25.0),
+                              ),
+                              const SizedBox(height: 10.0),
+                              Text(
+                                userDetails[0]['email'],
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontSize: 14.0,
                                 ),
-                                alignment: Alignment.bottomRight,
-                              )
+                              ),
                             ]),
-                      ],
-                    ),
-                  ),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => EditProfile(userID : userID))
+                            );
+                          },
+                          icon: const Icon(
+                            Icons.edit_rounded,
+                            color: primaryColorLite,
+                          ),
+                          alignment: Alignment.bottomRight,
+                        )
+                      ]),
+                ],
+              ),
+            ),
 
-                  // ListTile(
-                  //   leading: const Icon(Icons.settings),
-                  //   title: const Text('Settings', style: TextStyle(fontSize: 18)),
-                  //   onTap: () {
-                  //     // Here you can give your route to navigate
-                  //
-                  //   },
-                  // ),
+            // ListTile(
+            //   leading: const Icon(Icons.settings),
+            //   title: const Text('Settings', style: TextStyle(fontSize: 18)),
+            //   onTap: () {
+            //     // Here you can give your route to navigate
+            //
+            //   },
+            // ),
 
-                  const Divider(height: 3.0),
-                  ListTile(
-                    leading: const Icon(Icons.close),
-                    title: const Text('Close Drawer',
-                        style: TextStyle(fontSize: 18)),
-                    onTap: () {
-                      // Here you can give your route to navigate
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ])),
+            const Divider(height: 3.0),
+            ListTile(
+              leading: const Icon(Icons.close),
+              title: const Text('Close Drawer',
+                  style: TextStyle(fontSize: 18)),
+              onTap: () {
+                // Here you can give your route to navigate
+                Navigator.of(context).pop();
+              },
+            ),
+          ])),
       body: Container(
         color: Colors.white,
         child: Stack(children: <Widget>[
@@ -157,139 +157,139 @@ class EventGalleryState extends State<EventGallery> {
             Expanded(
                 child: eventData != null
                     ? RefreshIndicator(
-                        onRefresh: getData,
-                        strokeWidth: 2.5,
-                        child: eventData.length == 0
-                            ? NoItemFound(ErrorMsg:"You Corrently Have No Event", ErrorSubMag:"Wait for the Host to Share")
-                            : ListView.builder(
-                                scrollDirection: Axis.vertical,
-                                itemCount: eventData.length,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) => Container(
-                                  margin: const EdgeInsets.only(
-                                      left: 16, right: 16, bottom: 16),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: defaultBoxShadow(),
-                                      color: const Color(0xD7DAE8FC)),
-                                  child: Stack(children: <Widget>[
-                                    Column(children: <Widget>[
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: SizedBox(
-                                              height: 150,
-                                              width: 320,
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                                child: Image.network(
-                                                    eventData[index]['url'],
-                                                    fit: BoxFit.cover),
-                                              ),
-                                            ),
-                                          ),
-
-                                          // SizedBox(height: 16),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16),
-                                            child: Row(
-                                              children: <Widget>[
-                                                Container(
-                                                  child: Text(
-                                                          eventData[index]
-                                                              ['name'],
-                                                          style: boldTextStyle(
-                                                              size: 18))
-                                                      .expand(),
-                                                ),
-                                                Text(
-                                                    'Host: ${eventData[index]['host']}',
-                                                    style: const TextStyle(
-                                                        fontSize: 14)),
-                                              ],
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16,vertical: 10),
-                                            child: Row(children: [
-                                              Text(
-                                                eventData[index]['date']
-                                                    .toString()
-                                                    .substring(0, 10),
-                                                style: secondaryTextStyle(
-                                                    size: 16),
-                                              ).expand(),
-                                              // IconButton(
-                                              //     onPressed: () {
-                                              //       Share.share(
-                                              //           "This is ${eventData[index]['name']} and you are invited for ${eventData[index]['host']}");
-                                              //     },
-                                              //     icon: const Icon(
-                                              //       Icons.share_rounded,
-                                              //       size: 20,
-                                              //     )),
-                                            ]),
-                                          )
-                                        ],
-                                      ),
-                                      ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            primary: Colors.white,
-                                            elevation: 4,
-                                            shape: const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.only(
-                                                    bottomLeft:
-                                                        Radius.circular(10.0),
-                                                    bottomRight:
-                                                        Radius.circular(10.0))),
-                                            padding: const EdgeInsets.all(0.0),
-                                          ),
-                                          child: Container(
-                                            decoration: const BoxDecoration(
-                                              gradient: LinearGradient(
-                                                  begin: Alignment.centerLeft,
-                                                  end: Alignment.centerRight,
-                                                  colors: [
-                                                    primaryColorLite,
-                                                    primaryColorDark
-                                                  ]),
-                                              borderRadius: BorderRadius.only(
-                                                  bottomLeft:
-                                                      Radius.circular(10.0),
-                                                  bottomRight:
-                                                      Radius.circular(10.0)),
-                                            ),
-                                            child: const Center(
-                                              child: Padding(
-                                                padding: EdgeInsets.all(18.0),
-                                                child: Text(
-                                                  "View Event Pictures",
-                                                  style:
-                                                      TextStyle(fontSize: 18),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            var Id = eventData[index]['ID'];
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PickGallery(Id: Id)));
-                                          })
-                                    ]),
-                                  ]),
+                  onRefresh: getData,
+                  strokeWidth: 2.5,
+                  child: eventData.length == 0
+                      ? NoItemFound(ErrorMsg:"You Corrently Have No Event", ErrorSubMag:"Wait for the Host to Share")
+                      : ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    itemCount: eventData.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) => Container(
+                      margin: const EdgeInsets.only(
+                          left: 16, right: 16, bottom: 16),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: defaultBoxShadow(),
+                          color: const Color(0xD7DAE8FC)),
+                      child: Stack(children: <Widget>[
+                        Column(children: <Widget>[
+                          Column(
+                            crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: SizedBox(
+                                  height: 150,
+                                  width: 320,
+                                  child: ClipRRect(
+                                    borderRadius:
+                                    BorderRadius.circular(10.0),
+                                    child: Image.network(
+                                        eventData[index]['url'],
+                                        fit: BoxFit.cover),
+                                  ),
                                 ),
                               ),
-                      )
+
+                              // SizedBox(height: 16),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16),
+                                child: Row(
+                                  children: <Widget>[
+                                    Container(
+                                      child: Text(
+                                          eventData[index]
+                                          ['name'],
+                                          style: boldTextStyle(
+                                              size: 18))
+                                          .expand(),
+                                    ),
+                                    Text(
+                                        'Host: ${eventData[index]['host']}',
+                                        style: const TextStyle(
+                                            fontSize: 14)),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,vertical: 10),
+                                child: Row(children: [
+                                  Text(
+                                    eventData[index]['date']
+                                        .toString()
+                                        .substring(0, 10),
+                                    style: secondaryTextStyle(
+                                        size: 16),
+                                  ).expand(),
+                                  // IconButton(
+                                  //     onPressed: () {
+                                  //       Share.share(
+                                  //           "This is ${eventData[index]['name']} and you are invited for ${eventData[index]['host']}");
+                                  //     },
+                                  //     icon: const Icon(
+                                  //       Icons.share_rounded,
+                                  //       size: 20,
+                                  //     )),
+                                ]),
+                              )
+                            ],
+                          ),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.white,
+                                elevation: 4,
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                        bottomLeft:
+                                        Radius.circular(10.0),
+                                        bottomRight:
+                                        Radius.circular(10.0))),
+                                padding: const EdgeInsets.all(0.0),
+                              ),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                      colors: [
+                                        primaryColorLite,
+                                        primaryColorDark
+                                      ]),
+                                  borderRadius: BorderRadius.only(
+                                      bottomLeft:
+                                      Radius.circular(10.0),
+                                      bottomRight:
+                                      Radius.circular(10.0)),
+                                ),
+                                child: const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(18.0),
+                                    child: Text(
+                                      "View Event Pictures",
+                                      style:
+                                      TextStyle(fontSize: 18),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              onPressed: () {
+                                var Id = eventData[index]['ID'];
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            PickGallery(Id: Id)));
+                              })
+                        ]),
+                      ]),
+                    ),
+                  ),
+                )
                     : const Center(child: CircularProgressIndicator()))
           ]),
         ]),

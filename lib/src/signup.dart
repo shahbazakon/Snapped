@@ -1,12 +1,12 @@
+import 'package:email_auth/email_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:snapped/utils/color.dart';
 
 import 'API Request/post.dart';
+import 'Widget/auth.config.dart';
 import 'Widget/bezier_container.dart';
 import 'Widget/widgets.dart';
 import 'login.dart';
-import 'package:email_auth/email_auth.dart';
-
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key, required this.title}) : super(key: key);
@@ -28,6 +28,9 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController userNameController = TextEditingController();
   TextEditingController emailIdController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController OTPController = TextEditingController();
+
+
 
   Widget _backButton() {
     return InkWell(
@@ -73,7 +76,8 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
-  Widget _OTPField(String title) {
+
+  Widget _OTPField(String title,TextEditingController OTPController) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -86,20 +90,30 @@ class _SignUpPageState extends State<SignUpPage> {
           const SizedBox(
             height: 10,
           ),
-          const TextField(
-            style: TextStyle(color: primaryColorDark,fontSize: 20,fontWeight: FontWeight.bold),
+          TextField(
+            controller: OTPController,
+              style: const TextStyle(
+                  color: primaryColorDark,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
               keyboardType: TextInputType.number,
               enabled: true,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.all(0),
-
-                suffix: TextButton(onPressed: null, child: Text("Send OTP",style: TextStyle(color: primaryColorDark,fontSize: 15,fontWeight: FontWeight.bold),)),
+                suffix: TextButton(
+                    onPressed:()=> sendOtp(),
+                    child: const Text(
+                      "Send OTP",
+                      style: TextStyle(
+                          color: primaryColorDark,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold),
+                    )),
               ))
         ],
       ),
     );
   }
-
 
   Widget _passwordntryField(String title, TextEditingController MyController) {
     return Container(
@@ -238,14 +252,24 @@ class _SignUpPageState extends State<SignUpPage> {
         _entryField("Username", userNameController),
         _passwordntryField("Password", passwordController),
         _entryField("Email id", emailIdController),
-        _OTPField("OTP"),
-
+        _OTPField("OTP",OTPController),
       ],
     );
   }
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the package
+    emailAuth = EmailAuth(
+      sessionName: "Sample session",
+    );
+
+    // emailAuth.config(remoteServerConfiguration);
+  }
 
   late EmailAuth emailAuth;
-  void sendOtp() async {
+
+  sendOtp() async {
     bool result = await emailAuth.sendOtp(
         recipientMail: emailIdController.text, otpLength: 4);
     if (result) {
@@ -255,14 +279,13 @@ class _SignUpPageState extends State<SignUpPage> {
       });
     }
   }
+
   void verify() {
     bool EmailRes = emailAuth.validateOtp(
-        recipientMail: emailIdController.text,
-        userOtp: emailIdController.text);
-    if(EmailRes){
+        recipientMail: emailIdController.text, userOtp: OTPController.text);
+    if (EmailRes) {
       print('OTP varified');
-    }
-    else{
+    } else {
       print('Wrong OTP');
       _OTPerror = true;
     }
@@ -321,7 +344,6 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                     ),
-
                     Visibility(
                       visible: _OTPerror,
                       child: const Padding(
@@ -346,7 +368,6 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                     ),
-
                     Visibility(
                       visible: allreadyExciestVisible,
                       child: const Padding(
