@@ -18,6 +18,12 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+
+  // ======================================================================================================================================//
+  // ----------------------------------------------------------- initialization ---------------------------------------------------//
+  // ======================================================================================================================================//
+
+
   bool successVisible = false;
   bool ErrorVisible = false;
   bool _OTPsend = false;
@@ -30,6 +36,101 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController OTPController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the package
+    emailAuth = EmailAuth(
+      sessionName: "Snapped Email Authentication",
+    );
+
+    emailAuth.config(remoteServerConfiguration);
+  }
+//--------------------------Email Authentication Method-----------------------//
+  late EmailAuth emailAuth;
+  sendOtp() async {
+    bool result = await emailAuth.sendOtp(
+        recipientMail: emailIdController.text, otpLength: 5);
+    print("SendOTP result : $result");
+    if (result) {
+      setState(() {
+        print("OTP is sent");
+        _OTPsend = true;
+      });
+    }
+  }
+
+  verify() {
+    bool EmailRes = emailAuth.validateOtp(
+        recipientMail: emailIdController.text, userOtp: OTPController.text);
+    print("Varify EmailRes: $EmailRes");
+    if (EmailRes) {
+      print('OTP varified');
+    } else {
+      print('Wrong OTP');
+      _OTPerror = true;
+    }
+    return EmailRes;
+  }
+
+  // ======================================================================================================================================//
+  // ----------------------------------------------------------- page Architecture---------------------------------------------------//
+  // ======================================================================================================================================//
+
+
+  @override
+  Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    return Scaffold(
+      body: SizedBox(
+        height: height,
+        child: SingleChildScrollView(
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                top: -MediaQuery.of(context).size.height * .15,
+                right: -MediaQuery.of(context).size.width * .4,
+                child: const BezierContainer(),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: height * .2),
+                    snappedTitle(),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    _emailPasswordWidget(),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    SignupMag("Account is Successfully Created", successVisible,
+                        Colors.green),
+                    SignupMag("OTP Send Successfully", _OTPsend, Colors.green),
+                    SignupMag("Wrong OTP , Try Again", _OTPerror, Colors.red),
+                    SignupMag("Error Occure", ErrorVisible, Colors.red),
+                    SignupMag("User Already Exciest", allreadyExciestVisible,
+                        Colors.red),
+                    _submitButton(),
+                    SizedBox(height: height * .14),
+                    _loginAccountLabel(),
+                  ],
+                ),
+              ),
+              Positioned(top: 40, left: 0, child: _backButton()),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ======================================================================================================================================//
+  // ----------------------------------------------------------- Widget Functionalities ---------------------------------------------------//
+  // ======================================================================================================================================//
 
 
   Widget _backButton() {
@@ -77,44 +178,6 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _OTPField(String title,TextEditingController OTPController) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          TextField(
-            controller: OTPController,
-              style: const TextStyle(
-                  color: primaryColorDark,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
-              keyboardType: TextInputType.number,
-              enabled: true,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(0),
-                suffix: TextButton(
-                    onPressed:()=> sendOtp(),
-                    child: const Text(
-                      "Send OTP",
-                      style: TextStyle(
-                          color: primaryColorDark,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold),
-                    )),
-              ))
-        ],
-      ),
-    );
-  }
-
   Widget _passwordntryField(String title, TextEditingController MyController) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -150,6 +213,55 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  Widget _emailPasswordWidget() {
+    return Column(
+      children: <Widget>[
+        _entryField("Username", userNameController),
+        _passwordntryField("Password", passwordController),
+        _entryField("Email id", emailIdController),
+        _OTPField("OTP", OTPController),
+      ],
+    );
+  }
+
+  Widget _OTPField(String title, TextEditingController OTPController) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          TextField(
+              controller: OTPController,
+              style: const TextStyle(
+                  color: primaryColorDark,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+              keyboardType: TextInputType.number,
+              enabled: true,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(0),
+                suffix: TextButton(
+                    onPressed: () async => await sendOtp(),
+                    child: const Text(
+                      "Send OTP",
+                      style: TextStyle(
+                          color: primaryColorDark,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold),
+                    )),
+              ))
+        ],
+      ),
+    );
+  }
+
   Widget _submitButton() {
     return GestureDetector(
       onTap: () async {
@@ -163,12 +275,19 @@ class _SignUpPageState extends State<SignUpPage> {
           });
         }
         if (userRes.data['code'] == '1') {
-          setState(() {
-            successVisible = true;
-          });
-          await Future.delayed(const Duration(seconds: 2));
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => LoginPage(title: '')));
+          var EmailRes = await verify();
+          if(EmailRes) {
+            setState(() {
+              successVisible = true;
+            });
+            await Future.delayed(const Duration(seconds: 2));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => LoginPage(title: '')));
+          }
+          else{
+            _OTPerror = true;
+            print("try again");
+          }
         }
         if (userRes.data['code'] == '5') {
           print('The user is already exciest');
@@ -176,13 +295,12 @@ class _SignUpPageState extends State<SignUpPage> {
             allreadyExciestVisible = true;
           });
         }
-
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => LoginPage(
-                      title: '',
-                    )));
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => LoginPage(
+        //               title: '',
+        //             )));
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -246,149 +364,15 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _emailPasswordWidget() {
-    return Column(
-      children: <Widget>[
-        _entryField("Username", userNameController),
-        _passwordntryField("Password", passwordController),
-        _entryField("Email id", emailIdController),
-        _OTPField("OTP",OTPController),
-      ],
-    );
-  }
-  @override
-  void initState() {
-    super.initState();
-    // Initialize the package
-    emailAuth = EmailAuth(
-      sessionName: "Sample session",
-    );
-
-    // emailAuth.config(remoteServerConfiguration);
-  }
-
-  late EmailAuth emailAuth;
-
-  sendOtp() async {
-    bool result = await emailAuth.sendOtp(
-        recipientMail: emailIdController.text, otpLength: 4);
-    if (result) {
-      setState(() {
-        print("OTP is sent");
-        _OTPsend = true;
-      });
-    }
-  }
-
-  void verify() {
-    bool EmailRes = emailAuth.validateOtp(
-        recipientMail: emailIdController.text, userOtp: OTPController.text);
-    if (EmailRes) {
-      print('OTP varified');
-    } else {
-      print('Wrong OTP');
-      _OTPerror = true;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: SizedBox(
-        height: height,
-        child: SingleChildScrollView(
-          child: Stack(
-            children: <Widget>[
-              Positioned(
-                top: -MediaQuery.of(context).size.height * .15,
-                right: -MediaQuery.of(context).size.width * .4,
-                child: const BezierContainer(),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: height * .2),
-                    snappedTitle(),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    _emailPasswordWidget(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Visibility(
-                      visible: successVisible,
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          "Account is Successfully Created",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.green, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                      visible: _OTPsend,
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          "OTP Send Successfully",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.green, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                      visible: _OTPerror,
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          "Wrong OTP , Try Again",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                      visible: ErrorVisible,
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          "Error Occure",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                      visible: allreadyExciestVisible,
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          "User Already Exciest",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    _submitButton(),
-                    SizedBox(height: height * .14),
-                    _loginAccountLabel(),
-                  ],
-                ),
-              ),
-              Positioned(top: 40, left: 0, child: _backButton()),
-            ],
-          ),
+  Visibility SignupMag(String Msg, bool visublitycontrlar, Color MsgColor) {
+    return Visibility(
+      visible: visublitycontrlar,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          Msg,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: MsgColor, fontWeight: FontWeight.bold),
         ),
       ),
     );

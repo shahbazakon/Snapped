@@ -17,9 +17,11 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
+  // ======================================================================================================================================//
+  // ----------------------------------------------------------- Initialization -----------------------------------------------------------//
+  // ======================================================================================================================================//
+
   final userID;
-
-
   _EditProfileState(this.userID);
 
   PickedFile? profilePick;
@@ -50,7 +52,10 @@ class _EditProfileState extends State<EditProfile> {
     setState(() {});
   }
 
-// ======================================================= SCAFFOLD START ===========================================================================
+  // ======================================================================================================================================//
+  // ----------------------------------------------------------- Page Architecture --------------------------------------------------------//
+  // ======================================================================================================================================//
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,29 +85,23 @@ class _EditProfileState extends State<EditProfile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // MAIN LOGO
-                // SnappedLogo(),
                 ProfilePicture(),
                 const SizedBox(height: 16),
-
-                // USERNAME FIELD
                 TextField(userDetails[0]['username'], "Username",
                     UsernameController),
-                // EMAIL FIELD
                 TextField(
                     userDetails[0]['email'], "Email", EmailController),
-                // SAVE DETAILS BUTTON
                 newPasswordField(),
                 oldPasswordField(),
 
-                // SAVE DETAILS BUTTON
                 profileEditMsg("Account details is Successfully Saved",Colors.green,successVisible),
+                profileEditMsg("Old Password Not Match",Colors.red,wrongPassword),
                 GestureDetector(
                   onTap: () async {
                     //PUT REQUEST TO EDIT PROFILE
                     if(oldPasswordController.text.isEmpty == false){
                       print(
-                          '1: ${UsernameController.text}\n 2: ${EmailController.text}\n 3: ${newPasswordController.text} \n 4: ${oldPasswordController.text} \n $profilePick');
+                          '1: ${UsernameController.text}\n 2: ${EmailController.text}\n 3: ${newPasswordController.text} \n 4: ${oldPasswordController.text} \n $profilePick ');
                       var editRes  = await editProfileDetails(
                         profilePick,
                         UsernameController.text,
@@ -111,7 +110,8 @@ class _EditProfileState extends State<EditProfile> {
                         oldPasswordController.text
                       ).editDetails(userID);
                       // SHOW SUCCESS MESSAGE
-                      if(editRes==1){
+                      print("Edit RESPONCE  : $editRes \n ${editRes.runtimeType}");
+                      if(editRes=='1'){
                         setState(() {
                           successVisible = true;
                         });
@@ -119,7 +119,8 @@ class _EditProfileState extends State<EditProfile> {
                         //MODE TO EVENT PAGE
                         Navigator.pushNamed(context, '/event');
                       }
-                      if(editRes==-5){
+                      if(editRes=='-5'){
+                        wrongPassword = true;
                           Fluttertoast.showToast(
                               msg: "Old Password Not Match",
                               textColor: Colors.red,
@@ -128,7 +129,7 @@ class _EditProfileState extends State<EditProfile> {
                               timeInSecForIosWeb: 1);
 
                       }
-                      else{
+                      if(editRes=='-1'){
                         Fluttertoast.showToast(
                             msg: "Error! Try Again",
                             textColor: Colors.red,
@@ -187,7 +188,9 @@ class _EditProfileState extends State<EditProfile> {
         ));
   }
 
-  // =======================================================WIDGETS WORKING===========================================================================
+  // ======================================================================================================================================//
+  // ----------------------------------------------------------- Widget Functionalities ---------------------------------------------------//
+  // ======================================================================================================================================//
 
   Widget ProfilePicture() {
     return Center(
@@ -223,58 +226,33 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Widget bottomSheet() {
-    return Container(
-      height: 100.0,
-      width: MediaQuery.of(context).size.width,
-      margin: EdgeInsets.all(20),
-      child: Column(
-        children: [
-          const Text(
-            "Choose Profile photo",
-            style: TextStyle(fontSize: 20.0),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              FlatButton.icon(
-                  onPressed: () async {
-                    final pickedfile =
-                    await _picker.getImage(source: ImageSource.camera);
-                    setState(() {
-                      profilePick = pickedfile;
-                    });
-                  },
-                  icon: const Icon(Icons.camera_sharp),
-                  label: const Text("Camara")),
-              FlatButton.icon(
-                  onPressed: () async {
-                    final pickedfile =
-                    await _picker.getImage(source: ImageSource.gallery);
-                    setState(() {
-                      profilePick = pickedfile;
-                    });
-                  },
-                  icon: const Icon(Icons.image_rounded),
-                  label: const Text("Gallery"))
-            ],
-          )
-        ],
+  Padding SnappedLogo() {
+    return Padding(
+      padding: const EdgeInsets.all(18),
+      child: Image.asset(
+        'assets/snappedLogo.png',
+        height: 80,
       ),
     );
   }
 
-  Padding profileEditMsg(String Msg,Color mycolor, bool isvisible) {
+  Padding TextField(
+      String Myinitvalue, String MyLabel, TextEditingController MyController) {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Visibility(
-        visible: isvisible,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            Msg,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: mycolor, fontWeight: FontWeight.bold),
+      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+      child: Expanded(
+        child: AppTextField(
+          textStyle: primaryTextStyle(weight: FontWeight.bold, size: 18),
+          textFieldType: TextFieldType.EMAIL,
+          cursorColor: primaryColorDark,
+          controller: MyController..text = Myinitvalue,
+          decoration: InputDecoration(
+            labelText: MyLabel,
+            labelStyle: const TextStyle(color: primaryColorDark),
+            focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: primaryColorLite, width: 1.5)),
+            enabledBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: grey, width: 0.5)),
           ),
         ),
       ),
@@ -331,33 +309,58 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Padding SnappedLogo() {
-    return Padding(
-      padding: const EdgeInsets.all(18),
-      child: Image.asset(
-        'assets/snappedLogo.png',
-        height: 80,
+  Widget bottomSheet() {
+    return Container(
+      height: 100.0,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.all(20),
+      child: Column(
+        children: [
+          const Text(
+            "Choose Profile photo",
+            style: TextStyle(fontSize: 20.0),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              FlatButton.icon(
+                  onPressed: () async {
+                    final pickedfile =
+                    await _picker.getImage(source: ImageSource.camera);
+                    setState(() {
+                      profilePick = pickedfile;
+                    });
+                  },
+                  icon: const Icon(Icons.camera_sharp),
+                  label: const Text("Camara")),
+              FlatButton.icon(
+                  onPressed: () async {
+                    final pickedfile =
+                    await _picker.getImage(source: ImageSource.gallery);
+                    setState(() {
+                      profilePick = pickedfile;
+                    });
+                  },
+                  icon: const Icon(Icons.image_rounded),
+                  label: const Text("Gallery"))
+            ],
+          )
+        ],
       ),
     );
   }
 
-  Padding TextField(
-      String Myinitvalue, String MyLabel, TextEditingController MyController) {
+  Padding profileEditMsg(String Msg,Color mycolor, bool isvisible) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-      child: Expanded(
-        child: AppTextField(
-          textStyle: primaryTextStyle(weight: FontWeight.bold, size: 18),
-          textFieldType: TextFieldType.EMAIL,
-          cursorColor: primaryColorDark,
-          controller: MyController..text = Myinitvalue,
-          decoration: InputDecoration(
-            labelText: MyLabel,
-            labelStyle: const TextStyle(color: primaryColorDark),
-            focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: primaryColorLite, width: 1.5)),
-            enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: grey, width: 0.5)),
+      padding: const EdgeInsets.all(12.0),
+      child: Visibility(
+        visible: isvisible,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            Msg,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: mycolor, fontWeight: FontWeight.bold),
           ),
         ),
       ),

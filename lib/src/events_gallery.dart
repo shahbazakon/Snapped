@@ -23,8 +23,8 @@ class EventGallery extends StatefulWidget {
 }
 
 class EventGalleryState extends State<EventGallery> {
-  final userID;
 
+  final userID;
   EventGalleryState(this.userID);
 
   var eventUrl = "https://snapped.kiska.co.in/api/v1/getevents/";

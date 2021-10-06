@@ -1,6 +1,5 @@
-
 Map<String, String> get remoteServerConfiguration=>
-    {
-"server": "server url",
-"serverKey": "serverKey"
+{
+  "server": "https://emailotp.kiska.co.in/",
+  "serverKey": 'URsArQ'
 };

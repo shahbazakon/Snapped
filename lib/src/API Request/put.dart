@@ -11,7 +11,6 @@ class editProfileDetails {
   String? newPasswordController;
   String? oldPasswordController;
 
-
   editProfileDetails(
       this.profilePick,
       this.UsernameController,
@@ -34,14 +33,14 @@ class editProfileDetails {
 
       List<int> imageBytes = await profilePick!.readAsBytes();
       String base64Image = base64Encode(imageBytes);
-    print('IMAGE : $base64Image');
+      print('IMAGE : $base64Image');
 
       var formData = {
       'username': UsernameController,
       'email' : EmailController,
       'password' : oldPasswordController,
       'newpassword' : newPasswordController,
-       // 'img': base64Image
+       'img': base64Image
        /*await MultipartFile.fromFile(
           profilePick!.path,
           filename: fileName,
@@ -53,13 +52,14 @@ class editProfileDetails {
           data: formData)
           .then((response) {
         response.statusCode == 200
-            ? print("successful edit Profile Details ${response.data} ")
-            : print("pset request is fail");
+            ? print("successful edit Profile Details \n RESPONSE: ${response.data} ")
+            : print("post request is fail");
 
-        print("userID ${response.data["data"]} ");
+        print("Responce Code :  ${response.data} ");
         return response.data;
 
           });
+      return res;
     } on DioError catch (e) {
       if (e.response != null) {
         print(e.message);
