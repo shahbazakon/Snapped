@@ -31,22 +31,22 @@ class editProfileDetails {
 
     try {
 
-      List<int> imageBytes = await profilePick!.readAsBytes();
-      String base64Image = base64Encode(imageBytes);
-      print('IMAGE : $base64Image');
+      // List<int> imageBytes = await profilePick!.readAsBytes();
+      // String base64Image = base64Encode(imageBytes);
+      // print('IMAGE : $base64Image');
 
-      var formData = {
+      var formData = FormData.fromMap({
       'username': UsernameController,
       'email' : EmailController,
       'password' : oldPasswordController,
       'newpassword' : newPasswordController,
-       'img': base64Image
-       /*await MultipartFile.fromFile(
+       // 'img': base64Image
+      'img':await MultipartFile.fromFile(
           profilePick!.path,
-          filename: fileName,
-          contentType: MediaType("image", fileName.split(".").last),
-        ),*/
-      };
+          filename: profilePick!.path.split('/').last,
+          // contentType: MediaType("image", fileName.split(".").last),
+        ),
+      });
       var res = await Dio()
           .put('https://snapped.kiska.co.in/user/edit/$userId',
           data: formData)

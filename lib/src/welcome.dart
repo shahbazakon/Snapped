@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:snapped/src/Widget/widgets.dart';
+import 'package:snapped/src/varifivation.dart';
 import 'package:snapped/utils/color.dart';
 
 import 'login.dart';

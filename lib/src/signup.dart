@@ -1,5 +1,6 @@
 import 'package:email_auth/email_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:snapped/src/varifivation.dart';
 import 'package:snapped/utils/color.dart';
 
 import 'API Request/post.dart';
@@ -23,17 +24,12 @@ class _SignUpPageState extends State<SignUpPage> {
   // ----------------------------------------------------------- initialization ---------------------------------------------------//
   // ======================================================================================================================================//
 
-
-  bool successVisible = false;
-  bool ErrorVisible = false;
-  bool _OTPsend = false;
-  bool _OTPerror = false;
-  bool allreadyExciestVisible = false;
   bool _isObscure = true;
+  bool successVisible = false;
 
   TextEditingController userNameController = TextEditingController();
-  TextEditingController emailIdController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController emailIdController = TextEditingController();
   TextEditingController OTPController = TextEditingController();
 
   @override
@@ -44,34 +40,17 @@ class _SignUpPageState extends State<SignUpPage> {
       sessionName: "Snapped Email Authentication",
     );
 
-    emailAuth.config(remoteServerConfiguration);
+    // emailAuth.config(remoteServerConfiguration);
   }
 //--------------------------Email Authentication Method-----------------------//
   late EmailAuth emailAuth;
-  sendOtp() async {
+  sendOTP() async {
     bool result = await emailAuth.sendOtp(
-        recipientMail: emailIdController.text, otpLength: 5);
-    print("SendOTP result : $result");
-    if (result) {
-      setState(() {
-        print("OTP is sent");
-        _OTPsend = true;
-      });
-    }
+        recipientMail: emailIdController.text);
+    return result;
+
   }
 
-  verify() {
-    bool EmailRes = emailAuth.validateOtp(
-        recipientMail: emailIdController.text, userOtp: OTPController.text);
-    print("Varify EmailRes: $EmailRes");
-    if (EmailRes) {
-      print('OTP varified');
-    } else {
-      print('Wrong OTP');
-      _OTPerror = true;
-    }
-    return EmailRes;
-  }
 
   // ======================================================================================================================================//
   // ----------------------------------------------------------- page Architecture---------------------------------------------------//
@@ -107,13 +86,10 @@ class _SignUpPageState extends State<SignUpPage> {
                     const SizedBox(
                       height: 20,
                     ),
-                    SignupMag("Account is Successfully Created", successVisible,
+
+
+                    SignupMag("OTP Successfully Sent", successVisible,
                         Colors.green),
-                    SignupMag("OTP Send Successfully", _OTPsend, Colors.green),
-                    SignupMag("Wrong OTP , Try Again", _OTPerror, Colors.red),
-                    SignupMag("Error Occure", ErrorVisible, Colors.red),
-                    SignupMag("User Already Exciest", allreadyExciestVisible,
-                        Colors.red),
                     _submitButton(),
                     SizedBox(height: height * .14),
                     _loginAccountLabel(),
@@ -219,88 +195,27 @@ class _SignUpPageState extends State<SignUpPage> {
         _entryField("Username", userNameController),
         _passwordntryField("Password", passwordController),
         _entryField("Email id", emailIdController),
-        _OTPField("OTP", OTPController),
       ],
     );
   }
 
-  Widget _OTPField(String title, TextEditingController OTPController) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          TextField(
-              controller: OTPController,
-              style: const TextStyle(
-                  color: primaryColorDark,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
-              keyboardType: TextInputType.number,
-              enabled: true,
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.all(0),
-                suffix: TextButton(
-                    onPressed: () async => await sendOtp(),
-                    child: const Text(
-                      "Send OTP",
-                      style: TextStyle(
-                          color: primaryColorDark,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold),
-                    )),
-              ))
-        ],
-      ),
-    );
-  }
 
   Widget _submitButton() {
+
     return GestureDetector(
       onTap: () async {
-        var userRes = await SignUp(userNameController.text,
-                emailIdController.text, passwordController.text)
-            .PostData();
-        if (userRes.data['code'] == '-1') {
-          print("Error Occurs");
+        var result = await sendOTP();
+        if (result) {
           setState(() {
-            ErrorVisible = true;
+            print("OTP is sent");
+            successVisible = true;
           });
         }
-        if (userRes.data['code'] == '1') {
-          var EmailRes = await verify();
-          if(EmailRes) {
-            setState(() {
-              successVisible = true;
-            });
-            await Future.delayed(const Duration(seconds: 2));
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => LoginPage(title: '')));
-          }
-          else{
-            _OTPerror = true;
-            print("try again");
-          }
-        }
-        if (userRes.data['code'] == '5') {
-          print('The user is already exciest');
-          setState(() {
-            allreadyExciestVisible = true;
-          });
-        }
-        // Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) => LoginPage(
-        //               title: '',
-        //             )));
+        await Future.delayed(const Duration(seconds: 2));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Verification(userNameController :userNameController,passwordController:passwordController,emailIdController:emailIdController)));
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
