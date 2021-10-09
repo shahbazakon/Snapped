@@ -87,9 +87,9 @@ class _EditProfileState extends State<EditProfile> {
               children: [
                 ProfilePicture(),
                 const SizedBox(height: 16),
-                TextField(userDetails[0]['username'], "Username",
+                textField(userDetails[0]['username'], "Username",
                     UsernameController),
-                TextField(
+                textField(
                     userDetails[0]['email'], "Email", EmailController),
                 newPasswordField(),
                 oldPasswordField(),
@@ -110,7 +110,6 @@ class _EditProfileState extends State<EditProfile> {
                         oldPasswordController.text
                       ).editDetails(userID);
                       // SHOW SUCCESS MESSAGE
-                      print("Edit RESPONCE  : $editRes \n ${editRes.runtimeType}");
                       if(editRes=='1'){
                         setState(() {
                           successVisible = true;
@@ -226,7 +225,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Padding SnappedLogo() {
+  Padding snappedLogo() {
     return Padding(
       padding: const EdgeInsets.all(18),
       child: Image.asset(
@@ -236,8 +235,8 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Padding TextField(
-      String Myinitvalue, String MyLabel, TextEditingController MyController) {
+  Padding textField(
+      String myInitValue, String myLabel, TextEditingController myController) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
       child: Expanded(
@@ -245,9 +244,9 @@ class _EditProfileState extends State<EditProfile> {
           textStyle: primaryTextStyle(weight: FontWeight.bold, size: 18),
           textFieldType: TextFieldType.EMAIL,
           cursorColor: primaryColorDark,
-          controller: MyController..text = Myinitvalue,
+          controller: myController..text = myInitValue,
           decoration: InputDecoration(
-            labelText: MyLabel,
+            labelText: myLabel,
             labelStyle: const TextStyle(color: primaryColorDark),
             focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: primaryColorLite, width: 1.5)),
@@ -313,7 +312,7 @@ class _EditProfileState extends State<EditProfile> {
     return Container(
       height: 100.0,
       width: MediaQuery.of(context).size.width,
-      margin: EdgeInsets.all(20),
+      margin: const EdgeInsets.all(20),
       child: Column(
         children: [
           const Text(

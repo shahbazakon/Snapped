@@ -30,11 +30,6 @@ class editProfileDetails {
 
 
     try {
-
-      // List<int> imageBytes = await profilePick!.readAsBytes();
-      // String base64Image = base64Encode(imageBytes);
-      // print('IMAGE : $base64Image');
-
       var formData = FormData.fromMap({
       'username': UsernameController,
       'email' : EmailController,
@@ -55,7 +50,7 @@ class editProfileDetails {
             ? print("successful edit Profile Details \n RESPONSE: ${response.data} ".toUpperCase())
             : print("post request is fail".toUpperCase());
 
-        print("Responce Code :  ${response.data} ".toUpperCase());
+        print("Response Code :  ${response.data} ".toUpperCase());
         return response.data;
 
           });

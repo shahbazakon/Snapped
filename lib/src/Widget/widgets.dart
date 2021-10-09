@@ -46,19 +46,19 @@ double dynamicWidth(BuildContext context) {
   }
 }
 
-class snappedAppBar extends StatefulWidget {
+class SnappedAppBar extends StatefulWidget {
   var titleName ;
   var ProfilePick;
 
-  snappedAppBar(var this.titleName, var this.ProfilePick );
+  SnappedAppBar(var this.titleName, var this.ProfilePick );
 
   @override
   State<StatefulWidget> createState() {
-    return snappedAppBarState();
+    return SnappedAppBarState();
   }
 }
 
-class snappedAppBarState extends State<snappedAppBar> {
+class SnappedAppBarState extends State<SnappedAppBar> {
   // final Image ProfilePick;
   // snappedAppBarState(this.ProfilePick);
 
@@ -75,7 +75,7 @@ class snappedAppBarState extends State<snappedAppBar> {
             Row(
               children: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.exit_to_app_rounded),
+                  icon: const Icon(Icons.exit_to_app_rounded),
                   color: Colors.white,
                   onPressed: () {
                     Constants.prefs?.setBool('loggedIn', false);
@@ -99,7 +99,7 @@ class snappedAppBarState extends State<snappedAppBar> {
                 Scaffold.of(context).openEndDrawer();
               },
               child: Container(
-                margin: EdgeInsets.only(right: 20, top: 8),
+                margin: const EdgeInsets.only(right: 20, top: 8),
                 child: CircleAvatar(
                   radius: 20,
                   backgroundImage: widget.ProfilePick == null
