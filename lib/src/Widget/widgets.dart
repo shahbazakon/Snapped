@@ -47,9 +47,10 @@ double dynamicWidth(BuildContext context) {
 }
 
 class snappedAppBar extends StatefulWidget {
-  var titleName;
+  var titleName ;
+  var ProfilePick;
 
-  snappedAppBar(var this.titleName);
+  snappedAppBar(var this.titleName, var this.ProfilePick );
 
   @override
   State<StatefulWidget> createState() {
@@ -58,6 +59,9 @@ class snappedAppBar extends StatefulWidget {
 }
 
 class snappedAppBarState extends State<snappedAppBar> {
+  // final Image ProfilePick;
+  // snappedAppBarState(this.ProfilePick);
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -95,10 +99,12 @@ class snappedAppBarState extends State<snappedAppBar> {
                 Scaffold.of(context).openEndDrawer();
               },
               child: Container(
-                margin: const EdgeInsets.only(right: 20, top: 8),
-                child: const CircleAvatar(
-                  backgroundImage: AssetImage("assets/user.png"),
+                margin: EdgeInsets.only(right: 20, top: 8),
+                child: CircleAvatar(
                   radius: 20,
+                  backgroundImage: widget.ProfilePick == null
+                      ? const AssetImage('assets/user.png')
+                      : NetworkImage(widget.ProfilePick) as ImageProvider,
                 ),
               ),
             ),

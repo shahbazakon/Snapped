@@ -64,56 +64,62 @@ class EventGalleryState extends State<EventGallery> {
           child: userDetails == null
               ? const Center(child: CircularProgressIndicator())
               : ListView(children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(color: primaryColorDark),
-              child: Column(
-
-                children: [
-                  CircleAvatar(
-                    radius: 40.0,
-                    backgroundImage:NetworkImage(userDetails[0]['img']),
-                    // userDetails[0]['img'] == null
-                    //     ? AssetImage('assets/user.png')
-                    //     : NetworkImage(userDetails[0]['img']) as ImageProvider,
-                  ),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                userDetails[0]['username'],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    fontSize: 25.0),
-                              ),
-                              const SizedBox(height: 10.0),
-                              Text(
-                                userDetails[0]['email'],
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  fontSize: 14.0,
+            SizedBox(
+              height: 200,
+              child: DrawerHeader(
+                decoration: const BoxDecoration(color: primaryColorDark),
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 40.0,
+                      backgroundImage:
+                      // NetworkImage(userDetails[0]['img']),
+                      userDetails[0]['img'] == null
+                          ? const AssetImage('assets/user.png')
+                          : NetworkImage(userDetails[0]['img']) as ImageProvider,
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  userDetails[0]['username'],
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontSize: 25.0),
                                 ),
-                              ),
-                            ]),
-                        IconButton(
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => EditProfile(userID : userID))
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.edit_rounded,
-                            color: primaryColorLite,
-                          ),
-                          alignment: Alignment.bottomRight,
-                        )
-                      ]),
-                ],
+                                const SizedBox(height: 10.0),
+                                SizedBox(
+                                  width: 220,
+                                  child: Text(
+                                    userDetails[0]['email'],
+                                    style: const TextStyle(
+                                      // fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontSize: 15.0,
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) => EditProfile(userID : userID))
+                              );
+                            },
+                            icon: const Icon(
+                              Icons.edit_rounded,
+                              color: primaryColorLite,
+                            ),
+                            alignment: Alignment.bottomRight,
+                          )
+                        ]),
+                  ],
+                ),
               ),
             ),
 
@@ -153,7 +159,8 @@ class EventGalleryState extends State<EventGallery> {
             ),
           ),
           Column(children: <Widget>[
-            snappedAppBar("Event Gallery"),
+            snappedAppBar("Event Gallery", userDetails[0]['img']),
+
             Expanded(
                 child: eventData != null
                     ? RefreshIndicator(

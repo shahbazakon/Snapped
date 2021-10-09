@@ -21,7 +21,7 @@ class editProfileDetails {
 
   editDetails(userId) async {
 
-    print("edit Profile Details Called");
+    print("edit Profile Details Called".toUpperCase());
     print("editDetails: https://snapped.kiska.co.in/user/edit/$userId");
 
     String fileName = profilePick!.path.split('/').last;
@@ -41,7 +41,7 @@ class editProfileDetails {
       'password' : oldPasswordController,
       'newpassword' : newPasswordController,
        // 'img': base64Image
-      'img':await MultipartFile.fromFile(
+      'image':await MultipartFile.fromFile(
           profilePick!.path,
           filename: profilePick!.path.split('/').last,
           // contentType: MediaType("image", fileName.split(".").last),
@@ -52,15 +52,17 @@ class editProfileDetails {
           data: formData)
           .then((response) {
         response.statusCode == 200
-            ? print("successful edit Profile Details \n RESPONSE: ${response.data} ")
-            : print("post request is fail");
+            ? print("successful edit Profile Details \n RESPONSE: ${response.data} ".toUpperCase())
+            : print("post request is fail".toUpperCase());
 
-        print("Responce Code :  ${response.data} ");
+        print("Responce Code :  ${response.data} ".toUpperCase());
         return response.data;
 
           });
       return res;
-    } on DioError catch (e) {
+    }
+
+    on DioError catch (e) {
       if (e.response != null) {
         print(e.message);
         print(e.response!.data);
