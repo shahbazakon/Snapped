@@ -18,7 +18,9 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isObscure = true;
-  bool isVisible = false;
+  bool wrongValues = false;
+  bool indelidDetalis = false;
+
   TextEditingController passwordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
 
@@ -89,20 +91,28 @@ class _LoginPageState extends State<LoginPage> {
         print("USERNAME: ${emailController.text}");
         print("PASSWORD: ${passwordController.text}");
         print("loin page get $userRes");
+        if(emailController.text.isEmpty == false && passwordController.text.isEmpty == false) {
+          if (userRes.data['code'] == '-1') {
+            print("Wrong Username and Password");
+            setState(() {
+              wrongValues = true;
+              indelidDetalis = false;
+            });
+          }
+          if (userRes.data['code'] == '1') {
+            Constants.prefs?.setBool('loggedIn', true);
+            var userID = userRes.data['userID'];
+            Constants.userid?.setInt('UserID', userID);
 
-        if (userRes.data['code'] == '-1') {
-          print("wrong username and password");
-          setState(() {
-            isVisible = true;
-          });
+            EventGallery(userID: userID);
+            Navigator.pushReplacementNamed(context, '/event');
+          }
         }
-        if (userRes.data['code'] == '1') {
-          Constants.prefs?.setBool('loggedIn', true);
-          var userID = userRes.data['userID'];
-          Constants.userid?.setInt('UserID', userID);
-
-          EventGallery(userID: userID);
-          Navigator.pushReplacementNamed(context, '/event');
+        else{
+          setState(() {
+            indelidDetalis = true ;
+            wrongValues = false;
+          });
         }
       },
       child: Container(
@@ -200,9 +210,16 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 50),
                     _emailPasswordWidget(),
                     Visibility(
-                        visible: isVisible,
+                        visible: wrongValues,
                         child: const Text(
-                          "Wrong username OR password",
+                          "Wrong Username OR Password",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.red),
+                        )),
+                    Visibility(
+                        visible: indelidDetalis,
+                        child: const Text(
+                          "Invalid Username OR Password ",
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.red),
                         )),

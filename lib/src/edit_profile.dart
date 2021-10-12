@@ -43,7 +43,8 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
-    getData();
+    
+        getData();
   }
 
   Future<void> getData() async {
@@ -81,15 +82,16 @@ class _EditProfileState extends State<EditProfile> {
         body: userDetails == null
             ? const Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
+
           child: Form(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 ProfilePicture(),
                 const SizedBox(height: 16),
-                textField(userDetails[0]['username'], "Username",
+                TextField(userDetails[0]['username'], "Username",
                     UsernameController),
-                textField(
+                TextField(
                     userDetails[0]['email'], "Email", EmailController),
                 newPasswordField(),
                 oldPasswordField(),
@@ -102,24 +104,25 @@ class _EditProfileState extends State<EditProfile> {
                     if(oldPasswordController.text.isEmpty == false){
                       print(
                           '1: ${UsernameController.text}\n 2: ${EmailController.text}\n 3: ${newPasswordController.text} \n 4: ${oldPasswordController.text} \n $profilePick ');
-                      var editRes  = await editProfileDetails(
-                        profilePick,
-                        UsernameController.text,
-                        EmailController.text,
-                        newPasswordController.text,
-                        oldPasswordController.text
-                      ).editDetails(userID);
-                      // SHOW SUCCESS MESSAGE
-                      if(editRes=='1'){
-                        setState(() {
-                          successVisible = true;
-                        });
-                        await Future.delayed(const Duration(seconds: 4));
-                        //MODE TO EVENT PAGE
-                        Navigator.pushNamed(context, '/event');
-                      }
-                      if(editRes=='-5'){
-                        wrongPassword = true;
+                      if(profilePick!=null) {
+                        var editRes = await editProfileDetails(
+                            profilePick,
+                            UsernameController.text,
+                            EmailController.text,
+                            newPasswordController.text,
+                            oldPasswordController.text
+                        ).editDetails(userID);
+                        print("Edit RESPONCE  : $editRes \n ${editRes.runtimeType}");
+                        if(editRes=='1'){
+                          setState(() {
+                            successVisible = true;
+                          });
+                          await Future.delayed(const Duration(seconds: 2));
+                          //MODE TO EVENT PAGE
+                          Navigator.pushNamed(context, '/event');
+                        }
+                        if(editRes=='-5'){
+                          wrongPassword = true;
                           Fluttertoast.showToast(
                               msg: "Old Password Not Match",
                               textColor: Colors.red,
@@ -127,15 +130,53 @@ class _EditProfileState extends State<EditProfile> {
                               gravity: ToastGravity.CENTER,
                               timeInSecForIosWeb: 1);
 
-                      }
-                      if(editRes=='-1'){
-                        Fluttertoast.showToast(
-                            msg: "Error! Try Again",
-                            textColor: Colors.red,
-                            toastLength: Toast.LENGTH_LONG,
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 1);
+                        }
+                        if(editRes=='-1'){
+                          Fluttertoast.showToast(
+                              msg: "Error! Try Again",
+                              textColor: Colors.red,
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1);
 
+                        }
+                        // SHOW SUCCESS MESSAGE
+                      }
+                      else{
+                        var editRes = await editInfoDetails(
+                            UsernameController.text,
+                            EmailController.text,
+                            newPasswordController.text,
+                            oldPasswordController.text
+                        ).editDetails(userID);
+                        print("Edit RESPONCE  : $editRes \n ${editRes.runtimeType}");
+                        if(editRes=='1'){
+                          setState(() {
+                            successVisible = true;
+                          });
+                          await Future.delayed(const Duration(seconds: 2));
+                          //MODE TO EVENT PAGE
+                          Navigator.pushNamed(context, '/event');
+                        }
+                        if(editRes=='-5'){
+                          wrongPassword = true;
+                          Fluttertoast.showToast(
+                              msg: "Old Password Not Match",
+                              textColor: Colors.red,
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1);
+
+                        }
+                        if(editRes=='-1'){
+                          Fluttertoast.showToast(
+                              msg: "Error! Try Again",
+                              textColor: Colors.red,
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1);
+
+                        }
                       }
 
                     }
@@ -198,7 +239,7 @@ class _EditProfileState extends State<EditProfile> {
           radius: 60.0,
           backgroundImage: profilePick == null
               ? NetworkImage(userDetails[0]['img'])
-              : FileImage(File(profilePick!.path)) as ImageProvider,
+              : FileImage(File(profilePick?.path ?? userDetails[0]['img'])) as ImageProvider,
         ),
         Positioned(
           bottom: 4,
@@ -225,7 +266,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Padding snappedLogo() {
+  Padding SnappedLogo() {
     return Padding(
       padding: const EdgeInsets.all(18),
       child: Image.asset(
@@ -235,8 +276,8 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Padding textField(
-      String myInitValue, String myLabel, TextEditingController myController) {
+  Padding TextField(
+      String Myinitvalue, String MyLabel, TextEditingController MyController) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
       child: Expanded(
@@ -244,9 +285,9 @@ class _EditProfileState extends State<EditProfile> {
           textStyle: primaryTextStyle(weight: FontWeight.bold, size: 18),
           textFieldType: TextFieldType.EMAIL,
           cursorColor: primaryColorDark,
-          controller: myController..text = myInitValue,
+          controller: MyController..text = Myinitvalue,
           decoration: InputDecoration(
-            labelText: myLabel,
+            labelText: MyLabel,
             labelStyle: const TextStyle(color: primaryColorDark),
             focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: primaryColorLite, width: 1.5)),
@@ -312,7 +353,7 @@ class _EditProfileState extends State<EditProfile> {
     return Container(
       height: 100.0,
       width: MediaQuery.of(context).size.width,
-      margin: const EdgeInsets.all(20),
+      margin: EdgeInsets.all(20),
       child: Column(
         children: [
           const Text(

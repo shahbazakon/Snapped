@@ -30,15 +30,15 @@ class editProfileDetails {
 
 
     try {
+
       var formData = FormData.fromMap({
       'username': UsernameController,
       'email' : EmailController,
       'password' : oldPasswordController,
       'newpassword' : newPasswordController,
-       // 'img': base64Image
       'image':await MultipartFile.fromFile(
-          profilePick!.path,
-          filename: profilePick!.path.split('/').last,
+          profilePick?.path ?? '',
+          filename: profilePick?.path.split('/').last,
           // contentType: MediaType("image", fileName.split(".").last),
         ),
       });
@@ -50,10 +50,69 @@ class editProfileDetails {
             ? print("successful edit Profile Details \n RESPONSE: ${response.data} ".toUpperCase())
             : print("post request is fail".toUpperCase());
 
-        print("Response Code :  ${response.data} ".toUpperCase());
+        print("Responce Code :  ${response.data} ".toUpperCase());
         return response.data;
 
           });
+      return res;
+    }
+
+    on DioError catch (e) {
+      if (e.response != null) {
+        print(e.message);
+        print(e.response!.data);
+        print(e.response!.headers);
+        print(e.response);
+      } else {
+        print("Dio Error Occur");
+        print(e.message);
+      }
+    }
+  }
+}
+
+
+class editInfoDetails {
+  String? UsernameController;
+  String? EmailController;
+  String? newPasswordController;
+  String? oldPasswordController;
+
+  editInfoDetails(
+      this.UsernameController,
+      this.EmailController,
+      this.newPasswordController,
+      this.oldPasswordController
+      );
+
+  editDetails(userId) async {
+
+    print("edit infomation Details Called".toUpperCase());
+    print("editDetails: https://snapped.kiska.co.in/user/edit/$userId");
+
+
+
+
+    try {
+
+      var formData = FormData.fromMap({
+        'username': UsernameController,
+        'email' : EmailController,
+        'password' : oldPasswordController,
+        'newpassword' : newPasswordController,
+      });
+      var res = await Dio()
+          .put('https://snapped.kiska.co.in/user/edit/$userId',
+          data: formData)
+          .then((response) {
+        response.statusCode == 200
+            ? print("successful edit information Details \n RESPONSE: ${response.data} ".toUpperCase())
+            : print("post request is fail".toUpperCase());
+
+        print("Response Code :  ${response.data} ".toUpperCase());
+        return response.data;
+
+      });
       return res;
     }
 
