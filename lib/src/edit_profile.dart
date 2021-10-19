@@ -37,7 +37,7 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController oldPasswordController = TextEditingController();
 
-  var GETuserdetails = "https://snapped.kiska.co.in/api/v1/getuserdetails/";
+  var GETuserdetails = "http://snapped.kiska.co.in/api/v1/getuserdetails/";
   var userDetails;
 
   @override
@@ -280,20 +280,18 @@ class _EditProfileState extends State<EditProfile> {
       String Myinitvalue, String MyLabel, TextEditingController MyController) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-      child: Expanded(
-        child: AppTextField(
-          textStyle: primaryTextStyle(weight: FontWeight.bold, size: 18),
-          textFieldType: TextFieldType.EMAIL,
-          cursorColor: primaryColorDark,
-          controller: MyController..text = Myinitvalue,
-          decoration: InputDecoration(
-            labelText: MyLabel,
-            labelStyle: const TextStyle(color: primaryColorDark),
-            focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: primaryColorLite, width: 1.5)),
-            enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: grey, width: 0.5)),
-          ),
+      child: AppTextField(
+        textStyle: primaryTextStyle(weight: FontWeight.bold, size: 18),
+        textFieldType: TextFieldType.EMAIL,
+        cursorColor: primaryColorDark,
+        controller: MyController..text = Myinitvalue,
+        decoration: InputDecoration(
+          labelText: MyLabel,
+          labelStyle: const TextStyle(color: primaryColorDark),
+          focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: primaryColorLite, width: 1.5)),
+          enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: grey, width: 0.5)),
         ),
       ),
     );
@@ -302,21 +300,19 @@ class _EditProfileState extends State<EditProfile> {
   Padding newPasswordField() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-      child: Expanded(
-        child: AppTextField(
-          textStyle: primaryTextStyle(weight: FontWeight.bold, size: 18),
-          textFieldType: TextFieldType.PASSWORD,
-          cursorColor: primaryColorDark,
-          controller: newPasswordController,
-          decoration: const InputDecoration(
-            labelText: "New password",
-            hintText: "New Password",
-            labelStyle: TextStyle(color: primaryColorDark),
-            focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: primaryColorLite, width: 1.5)),
-            enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: grey, width: 0.5)),
-          ),
+      child: AppTextField(
+        textStyle: primaryTextStyle(weight: FontWeight.bold, size: 18),
+        textFieldType: TextFieldType.PASSWORD,
+        cursorColor: primaryColorDark,
+        controller: newPasswordController,
+        decoration: const InputDecoration(
+          labelText: "New password",
+          hintText: "New Password",
+          labelStyle: TextStyle(color: primaryColorDark),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: primaryColorLite, width: 1.5)),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: grey, width: 0.5)),
         ),
       ),
     );
@@ -325,25 +321,23 @@ class _EditProfileState extends State<EditProfile> {
   Padding oldPasswordField() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-      child: Expanded(
-        child: AppTextField(
-          textStyle: primaryTextStyle(weight: FontWeight.bold, size: 18),
-          textFieldType: TextFieldType.PASSWORD,
-          cursorColor: primaryColorDark,
-          controller: oldPasswordController,
-          decoration: InputDecoration(
-            labelText: "Old password*",
-            hintText: "Old Password*",
-            errorText: passwordValidation ? "Please Enter Old password" : null,
-            errorStyle: const TextStyle(color: Colors.red,fontWeight: FontWeight.bold,),
-            errorBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.red, width: 1.5)),
-            focusedBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: primaryColorLite, width: 1.5)),
-            enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: grey, width: 0.5)),
-            labelStyle: const TextStyle(color: primaryColorDark),
-          ),
+      child: AppTextField(
+        textStyle: primaryTextStyle(weight: FontWeight.bold, size: 18),
+        textFieldType: TextFieldType.PASSWORD,
+        cursorColor: primaryColorDark,
+        controller: oldPasswordController,
+        decoration: InputDecoration(
+          labelText: "Old password*",
+          hintText: "Old Password*",
+          errorText: passwordValidation ? "Please Enter Old password" : null,
+          errorStyle: const TextStyle(color: Colors.red,fontWeight: FontWeight.bold,),
+          errorBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red, width: 1.5)),
+          focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: primaryColorLite, width: 1.5)),
+          enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: grey, width: 0.5)),
+          labelStyle: const TextStyle(color: primaryColorDark),
         ),
       ),
     );

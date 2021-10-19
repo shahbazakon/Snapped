@@ -26,8 +26,8 @@ class EventGalleryState extends State<EventGallery> {
 
   EventGalleryState(this.userID);
 
-  var eventUrl = "https://snapped.kiska.co.in/api/v1/getevents/";
-  var GETuserdetails = "https://snapped.kiska.co.in/api/v1/getuserdetails/";
+  var eventUrl = "http://snapped.kiska.co.in/api/v1/getevents/";
+  var GETuserdetails = "http://snapped.kiska.co.in/api/v1/getuserdetails/";
 
   var eventData;
   var userDetails;

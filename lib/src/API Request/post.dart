@@ -15,7 +15,7 @@ class LogIn {
       };
 
       var res = await Dio()
-          .post('https://snapped.kiska.co.in/user/login',data: formData)
+          .post('http://snapped.kiska.co.in/user/login',data: formData)
           .then((response) {
 
         response.statusCode == 200
@@ -56,7 +56,7 @@ class SignUp {
       };
 
       var res = await Dio()
-          .post('https://snapped.kiska.co.in/user/register',data: formData)
+          .post('http://snapped.kiska.co.in/user/register',data: formData)
           .then((response) {
 
         response.statusCode == 200

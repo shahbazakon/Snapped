@@ -22,7 +22,7 @@ class editProfileDetails {
   editDetails(userId) async {
 
     print("edit Profile Details Called".toUpperCase());
-    print("editDetails: https://snapped.kiska.co.in/user/edit/$userId");
+    print("editDetails: http://snapped.kiska.co.in/user/edit/$userId");
 
     String fileName = profilePick!.path.split('/').last;
     print('PATH: ${profilePick!.path}');
@@ -30,20 +30,20 @@ class editProfileDetails {
 
 
     try {
-
+      var image = await MultipartFile.fromFile(
+        profilePick?.path ?? '',
+        filename: profilePick?.path.split('/').last,
+        // contentType: MediaType("image", fileName.split(".").last),
+      );
       var formData = FormData.fromMap({
       'username': UsernameController,
       'email' : EmailController,
       'password' : oldPasswordController,
       'newpassword' : newPasswordController,
-      'image':await MultipartFile.fromFile(
-          profilePick?.path ?? '',
-          filename: profilePick?.path.split('/').last,
-          // contentType: MediaType("image", fileName.split(".").last),
-        ),
+      'image': image,
       });
       var res = await Dio()
-          .put('https://snapped.kiska.co.in/user/edit/$userId',
+          .put('http://snapped.kiska.co.in/user/edit/$userId',
           data: formData)
           .then((response) {
         response.statusCode == 200
@@ -88,7 +88,7 @@ class editInfoDetails {
   editDetails(userId) async {
 
     print("edit infomation Details Called".toUpperCase());
-    print("editDetails: https://snapped.kiska.co.in/user/edit/$userId");
+    print("editDetails: http://snapped.kiska.co.in/user/edit/$userId");
 
 
 
@@ -102,7 +102,7 @@ class editInfoDetails {
         'newpassword' : newPasswordController,
       });
       var res = await Dio()
-          .put('https://snapped.kiska.co.in/user/edit/$userId',
+          .put('http://snapped.kiska.co.in/user/edit/$userId',
           data: formData)
           .then((response) {
         response.statusCode == 200

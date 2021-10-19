@@ -24,7 +24,7 @@ class _PickGalleryState extends State<PickGallery> {
 
   _PickGalleryState(this.Id);
 
-  var eventPickUrl = "https://snapped.kiska.co.in/api/v1/geteventpics/";
+  var eventPickUrl = "http://snapped.kiska.co.in/api/v1/geteventpics/";
   var eventPickData;
 
   @override
