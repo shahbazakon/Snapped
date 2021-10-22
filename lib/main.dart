@@ -11,10 +11,12 @@ Future main() async {
   Constants.prefs = await SharedPreferences.getInstance();
   Constants.userid = await SharedPreferences.getInstance();
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -31,13 +33,16 @@ class MyApp extends StatelessWidget {
       //       title: 'Snapped',
       //     ),
       home: Constants.prefs?.getBool('loggedIn') == true
-          ? EventGallery(userID: Constants.userid?.getInt('UserID'),)
+          ? EventGallery(
+              userID: Constants.userid?.getInt('UserID'),
+            )
           : const WelcomePage(
-        title: 'Snapped',
-      ),
+              title: 'Snapped',
+            ),
       routes: {
-        '/login': (context) => LoginPage(title: ''),
-        '/event': (BuildContext context) =>  EventGallery(userID: Constants.userid?.getInt('UserID')),
+        '/login': (context) => const LoginPage(title: ''),
+        '/event': (BuildContext context) =>
+            EventGallery(userID: Constants.userid?.getInt('UserID')),
       },
     );
   }

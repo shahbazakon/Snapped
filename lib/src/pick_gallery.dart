@@ -1,14 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-
-// import 'package:gallery_saver/gallery_saver.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:share/share.dart';
 import 'package:snapped/utils/color.dart';
 
-import 'no_item_found.dart';
 import 'img_full_preview.dart';
+import 'no_item_found.dart';
 
 class PickGallery extends StatefulWidget {
   final Id;
@@ -36,12 +34,6 @@ class _PickGalleryState extends State<PickGallery> {
   Future<void> getPick() async {
     var pickRes = await Dio().get('$eventPickUrl$Id');
     eventPickData = pickRes.data;
-    print("DATA : $eventPickData");
-    print("URL : $eventPickUrl$Id");
-    print("url1 : ${eventPickData[0]['url']}");
-    print("url2 : ${eventPickData[1]['url']}");
-    print("LENGTH : ${eventPickData.length}");
-
     setState(() {});
   }
 
@@ -70,8 +62,10 @@ class _PickGalleryState extends State<PickGallery> {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: eventPickData.length == 0
-                    ? const NoItemFound(ErrorMsg:"No Picture Found", ErrorSubMag:"Wait for the Host to Share")
-                    :GridView.builder(
+                    ? const NoItemFound(
+                        errorMsg: "No Picture Found",
+                        errorSubMag: "Wait for the Host to Share")
+                    : GridView.builder(
                         itemCount: eventPickData.length,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
@@ -147,9 +141,7 @@ class _PickGalleryState extends State<PickGallery> {
                                             toastLength: Toast.LENGTH_SHORT,
                                             gravity: ToastGravity.CENTER,
                                             timeInSecForIosWeb: 1);
-                                        setState(() {
-                                          print('Image is saved');
-                                        });
+                                        setState(() {});
                                       });
                                     },
                                     backgroundColor: Colors.black26,

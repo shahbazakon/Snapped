@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:snapped/src/varifivation.dart';
 import 'package:snapped/utils/color.dart';
 
-import 'API Request/post.dart';
-import 'Widget/auth.config.dart';
 import 'Widget/bezier_container.dart';
 import 'Widget/widgets.dart';
 import 'login.dart';
@@ -19,7 +17,6 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-
   // ======================================================================================================================================//
   // ----------------------------------------------------------- initialization ---------------------------------------------------//
   // ======================================================================================================================================//
@@ -30,7 +27,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController userNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController emailIdController = TextEditingController();
-  TextEditingController OTPController = TextEditingController();
+  TextEditingController otpController = TextEditingController();
 
   @override
   void initState() {
@@ -42,20 +39,19 @@ class _SignUpPageState extends State<SignUpPage> {
 
     // emailAuth.config(remoteServerConfiguration);
   }
+
 //--------------------------Email Authentication Method-----------------------//
   late EmailAuth emailAuth;
+
   sendOTP() async {
-    bool result = await emailAuth.sendOtp(
-        recipientMail: emailIdController.text);
+    bool result =
+        await emailAuth.sendOtp(recipientMail: emailIdController.text);
     return result;
-
   }
-
 
   // ======================================================================================================================================//
   // ----------------------------------------------------------- page Architecture---------------------------------------------------//
   // ======================================================================================================================================//
-
 
   @override
   Widget build(BuildContext context) {
@@ -86,10 +82,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     const SizedBox(
                       height: 20,
                     ),
-
-
-                    SignupMag("OTP Successfully Sent", successVisible,
-                        Colors.green),
+                    signupMag(
+                        "OTP Successfully Sent", successVisible, Colors.green),
                     _submitButton(),
                     SizedBox(height: height * .14),
                     _loginAccountLabel(),
@@ -107,7 +101,6 @@ class _SignUpPageState extends State<SignUpPage> {
   // ======================================================================================================================================//
   // ----------------------------------------------------------- Widget Functionalities ---------------------------------------------------//
   // ======================================================================================================================================//
-
 
   Widget _backButton() {
     return InkWell(
@@ -154,7 +147,7 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _passwordntryField(String title, TextEditingController MyController) {
+  Widget _passwordntryField(String title, TextEditingController myController) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -168,7 +161,7 @@ class _SignUpPageState extends State<SignUpPage> {
             height: 10,
           ),
           TextField(
-              controller: MyController,
+              controller: myController,
               obscureText: _isObscure,
               decoration: InputDecoration(
                   suffixIcon: IconButton(
@@ -199,23 +192,23 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-
   Widget _submitButton() {
-
     return GestureDetector(
       onTap: () async {
         var result = await sendOTP();
         if (result) {
           setState(() {
-            print("OTP is sent");
             successVisible = true;
           });
         }
-        await Future.delayed(const Duration(seconds: 2));
+        // await Future.delayed(const Duration(seconds: 1));
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => Verification(userNameController :userNameController,passwordController:passwordController,emailIdController:emailIdController)));
+                builder: (context) => Verification(
+                    userNameController: userNameController,
+                    passwordController: passwordController,
+                    emailIdController: emailIdController)));
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -279,15 +272,15 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Visibility SignupMag(String Msg, bool visublitycontrlar, Color MsgColor) {
+  Visibility signupMag(String msg, bool visiblityTag, Color msgColor) {
     return Visibility(
-      visible: visublitycontrlar,
+      visible: visiblityTag,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
-          Msg,
+          msg,
           textAlign: TextAlign.center,
-          style: TextStyle(color: MsgColor, fontWeight: FontWeight.bold),
+          style: TextStyle(color: msgColor, fontWeight: FontWeight.bold),
         ),
       ),
     );

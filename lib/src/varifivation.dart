@@ -1,18 +1,24 @@
 import 'package:email_auth/email_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:snapped/utils/color.dart';
+
 import 'API Request/post.dart';
 import 'Widget/bezier_container.dart';
-import 'Widget/widgets.dart';
 import 'login.dart';
 
 class Verification extends StatefulWidget {
-  final userNameController,passwordController,emailIdController;
+  final userNameController, passwordController, emailIdController;
 
-  const Verification({Key? key,this.userNameController,this.passwordController ,this.emailIdController}) : super(key: key);
+  const Verification(
+      {Key? key,
+      this.userNameController,
+      this.passwordController,
+      this.emailIdController})
+      : super(key: key);
 
   @override
-  _VerificationState createState() => _VerificationState(userNameController,passwordController,emailIdController);
+  _VerificationState createState() => _VerificationState(
+      userNameController, passwordController, emailIdController);
 }
 
 // ======================================================================================================================================//
@@ -20,19 +26,20 @@ class Verification extends StatefulWidget {
 // ======================================================================================================================================//
 
 class _VerificationState extends State<Verification> {
-  final userNameController,passwordController,emailIdController;
-  _VerificationState(this.userNameController,this.passwordController ,this.emailIdController);
+  final userNameController, passwordController, emailIdController;
 
+  _VerificationState(
+      this.userNameController, this.passwordController, this.emailIdController);
 
-  bool _OTPsend = false;
-  bool _OTPerror = false;
-  bool ErrorVisible = false;
+  bool _otpSend = false;
+  bool _otpError = false;
+  bool errorVisible = false;
   bool allreadyExciestVisible = false;
   bool accountcreated = false;
   bool successVisible = false;
-  bool OTPverifyed = false;
-  bool WorngOTP = false;
-  TextEditingController OTPController = TextEditingController();
+  bool otpVerifyed = false;
+  bool worngOTP = false;
+  TextEditingController otpController = TextEditingController();
 
   //--------------------------Email Authentication Method-----------------------//
   @override
@@ -45,37 +52,35 @@ class _VerificationState extends State<Verification> {
 
     // emailAuth.config(remoteServerConfiguration);
   }
+
   late EmailAuth emailAuth;
+
   sendOTP() async {
-    bool result = await emailAuth.sendOtp(
-        recipientMail: emailIdController.text);
-    print("SendOTP result : $result");
+    bool result =
+        await emailAuth.sendOtp(recipientMail: emailIdController.text);
     if (result) {
       setState(() {
-        print("OTP is sent");
-        _OTPsend = true;
-        _OTPerror = false;
-        ErrorVisible = false;
+        _otpSend = true;
+        _otpError = false;
+        errorVisible = false;
         allreadyExciestVisible = false;
         accountcreated = false;
         successVisible = false;
-        OTPverifyed = false;
-        WorngOTP = false;
+        otpVerifyed = false;
+        worngOTP = false;
       });
     }
   }
 
   verifyOTP() {
-    bool EmailRes = emailAuth.validateOtp(
-        recipientMail: emailIdController.text, userOtp: OTPController.text);
-    print("Verify EmailRes: $EmailRes");
-    return EmailRes;
+    bool emailRes = emailAuth.validateOtp(
+        recipientMail: emailIdController.text, userOtp: otpController.text);
+    return emailRes;
   }
 
   // ======================================================================================================================================//
   // ----------------------------------------------------------- page Architecture---------------------------------------------------//
   // ======================================================================================================================================//
-
 
   @override
   Widget build(BuildContext context) {
@@ -97,15 +102,10 @@ class _VerificationState extends State<Verification> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(height: height * .15),
-                    Image.asset(
-                      'assets/email_verification.png',
-                      height: 250
-                    ),
+                    Image.asset('assets/email_verification.png', height: 250),
                     const Text(
                       "Verify Your Email",
-                      style: TextStyle(
-                        color: Colors.grey
-                      ),
+                      style: TextStyle(color: Colors.grey),
                     ),
                     Container(height: 10),
                     SizedBox(
@@ -120,70 +120,75 @@ class _VerificationState extends State<Verification> {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    _OTPField(OTPController),
+                    _otpField(otpController),
                     const SizedBox(height: 5),
-              NotificationMsg("Email Verified , Press Next", successVisible,
-                  Colors.green),
-                    NotificationMsg("OTP Send Successfully", _OTPsend, Colors.green),
-                    NotificationMsg("Wrong OTP , Try Again", _OTPerror, Colors.red),
-                    SizedBox(height: 10),
+                    notificationMsg("Email Verified , Press Next",
+                        successVisible, Colors.green),
+                    notificationMsg(
+                        "OTP Send Successfully", _otpSend, Colors.green),
+                    notificationMsg(
+                        "Wrong OTP , Try Again", _otpError, Colors.red),
+                    const SizedBox(height: 10),
                     snappedButton(),
-                    TextBtn(),
+                    textBtn(),
                     SizedBox(height: height * .03),
-              NotificationMsg("User Already Exciest", allreadyExciestVisible,
-                  Colors.red),
-              NotificationMsg("Please Verify your Email", WorngOTP, Colors.red),
-              NotificationMsg("Error Occure", ErrorVisible, Colors.red),
-              NotificationMsg("Account is successfully Created",accountcreated, Colors.green),
+                    notificationMsg("User Already Exciest",
+                        allreadyExciestVisible, Colors.red),
+                    notificationMsg(
+                        "Please Verify your Email", worngOTP, Colors.red),
+                    notificationMsg("Error Occure", errorVisible, Colors.red),
+                    notificationMsg("Account is successfully Created",
+                        accountcreated, Colors.green),
                     FloatingActionButton(
                       onPressed: () async {
                         var userRes = await SignUp(userNameController.text,
-                            emailIdController.text, passwordController.text)
+                                emailIdController.text, passwordController.text)
                             .PostData();
 
-                        if(OTPverifyed == true){
+                        if (otpVerifyed == true) {
                           if (userRes.data['code'] == '1') {
                             setState(() {
                               accountcreated = true;
-                              _OTPerror = false;
+                              _otpError = false;
                               successVisible = false;
-                              _OTPsend = false;
-                              ErrorVisible = false;
+                              _otpSend = false;
+                              errorVisible = false;
                               allreadyExciestVisible = false;
-                              OTPverifyed = false;
-                              WorngOTP = false;
+                              otpVerifyed = false;
+                              worngOTP = false;
                             });
-                            await Future.delayed(const Duration(microseconds: 1500));
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) => LoginPage(title: '')));
-                          }
-                          else if (userRes.data['code'] == '5') {
-                            print('The user is already Exist');
+                            await Future.delayed(
+                                const Duration(microseconds: 1500));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        LoginPage(title: '')));
+                          } else if (userRes.data['code'] == '5') {
                             setState(() {
                               allreadyExciestVisible = true;
                               successVisible = false;
-                              _OTPerror = false;
-                              ErrorVisible = false;
-                              _OTPsend = false;
-                              OTPverifyed = false;
-                              WorngOTP = false;
+                              _otpError = false;
+                              errorVisible = false;
+                              _otpSend = false;
+                              otpVerifyed = false;
+                              worngOTP = false;
                             });
                           }
                           if (userRes.data['code'] == '-1') {
-                            print("Error Occurs");
                             setState(() {
-                              ErrorVisible = true;
-                              _OTPerror = false;
+                              errorVisible = true;
+                              _otpError = false;
                               successVisible = false;
-                              _OTPsend = false;
+                              _otpSend = false;
                               allreadyExciestVisible = false;
-                              OTPverifyed = false;
-                              WorngOTP = false;
+                              otpVerifyed = false;
+                              worngOTP = false;
                             });
-                        }                        }
-                        else{
+                          }
+                        } else {
                           setState(() {
-                            WorngOTP = true;
+                            worngOTP = true;
                           });
                         }
                         // Navigator.push(
@@ -193,7 +198,7 @@ class _VerificationState extends State<Verification> {
                         //               title: '',
                         //             )));
                       },
-                      child: Icon(Icons.arrow_forward),
+                      child: const Icon(Icons.arrow_forward),
                       elevation: 2,
                     )
                   ]),
@@ -208,7 +213,6 @@ class _VerificationState extends State<Verification> {
   // ======================================================================================================================================//
   // ----------------------------------------------------------- Widget Functionalities ---------------------------------------------------//
   // ======================================================================================================================================//
-
 
   Widget _backButton() {
     return InkWell(
@@ -231,7 +235,7 @@ class _VerificationState extends State<Verification> {
     );
   }
 
-  Widget _OTPField(TextEditingController OTPController) {
+  Widget _otpField(TextEditingController otpController) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -241,7 +245,7 @@ class _VerificationState extends State<Verification> {
             height: 10,
           ),
           TextField(
-              controller: OTPController,
+              controller: otpController,
               style: const TextStyle(
                   color: primaryColorDark,
                   fontSize: 20,
@@ -260,28 +264,26 @@ class _VerificationState extends State<Verification> {
   Widget snappedButton() {
     return GestureDetector(
       onTap: () async {
-      var EmailRes = await verifyOTP();
-      if(EmailRes) {
-        setState(() {
-          successVisible = true;
-          OTPverifyed = true;
-          _OTPsend = false;
-          _OTPerror = false;
-          ErrorVisible = false;
+        var emailRes = await verifyOTP();
+        if (emailRes) {
+          setState(() {
+            successVisible = true;
+            otpVerifyed = true;
+            _otpSend = false;
+            _otpError = false;
+            errorVisible = false;
+            allreadyExciestVisible = false;
+            accountcreated = false;
+          });
+        } else {
+          _otpError = true;
+          successVisible = false;
+          _otpSend = false;
+          errorVisible = false;
           allreadyExciestVisible = false;
           accountcreated = false;
-        });
-      }
-      else{
-        _OTPerror = true;
-        successVisible = false;
-        _OTPsend = false;
-        ErrorVisible = false;
-        allreadyExciestVisible = false;
-        accountcreated = false;
-        print("try again");
-      }
-    },
+        }
+      },
       child: Container(
         width: MediaQuery.of(context).size.width,
         alignment: Alignment.center,
@@ -307,8 +309,8 @@ class _VerificationState extends State<Verification> {
     );
   }
 
-  TextButton TextBtn() {
-    return  TextButton(
+  TextButton textBtn() {
+    return TextButton(
       onPressed: () async => await sendOTP(),
       child: const Text(
         "Resend OTP",
@@ -318,7 +320,8 @@ class _VerificationState extends State<Verification> {
     );
   }
 
-  Visibility NotificationMsg(String Msg, bool visublitycontrlar, Color MsgColor) {
+  Visibility notificationMsg(
+      String Msg, bool visublitycontrlar, Color MsgColor) {
     return Visibility(
       visible: visublitycontrlar,
       child: Padding(

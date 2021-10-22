@@ -27,7 +27,7 @@ class EventGalleryState extends State<EventGallery> {
   EventGalleryState(this.userID);
 
   var eventUrl = "http://snapped.kiska.co.in/api/v1/getevents/";
-  var GETuserdetails = "http://snapped.kiska.co.in/api/v1/getuserdetails/";
+  var getUserDetails = "http://snapped.kiska.co.in/api/v1/getuserdetails/";
 
   var eventData;
   var userDetails;
@@ -36,23 +36,17 @@ class EventGalleryState extends State<EventGallery> {
   void initState() {
     super.initState();
     getData();
-    print("USER ID: $userID");
   }
 
   Future<void> getData() async {
-    // await Future.delayed(const Duration(seconds: 2));
-    print("USERID: $userID");
-    // GET EVENT
-    var EventRse = await Dio().get(eventUrl,
+    var eventRse = await Dio().get(eventUrl,
         options: Options(headers: {
           "user": userID,
         }));
-    eventData = EventRse.data;
-    // GET USER INFO
-    var userdetailsRes = await Dio().get("$GETuserdetails$userID");
-    userDetails = userdetailsRes.data;
+    eventData = eventRse.data;
+    var userDetailsRes = await Dio().get("$getUserDetails$userID");
+    userDetails = userDetailsRes.data;
     setState(() {});
-    print(eventData);
   }
 
   @override
@@ -69,12 +63,15 @@ class EventGalleryState extends State<EventGallery> {
                     decoration: const BoxDecoration(color: primaryColorDark),
                     child: Column(
                       children: [
-                        CircleAvatar(
-                          radius: 40.0,
-                          backgroundImage: userDetails[0]['img'] == null
-                              ? const AssetImage('assets/user.png')
-                              : NetworkImage(userDetails[0]['img'])
-                                  as ImageProvider,
+                        Hero(
+                          tag: "ProfilePickTag",
+                          child: CircleAvatar(
+                            radius: 40.0,
+                            backgroundImage: userDetails[0]['img'] != ''
+                                ? NetworkImage(userDetails[0]['img'])
+                                : const AssetImage("assets/user.png")
+                                    as ImageProvider,
+                          ),
                         ),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -154,137 +151,136 @@ class EventGalleryState extends State<EventGallery> {
                 ? const Center(child: CircularProgressIndicator())
                 : SnappedAppBar("Event Gallery", userDetails[0]['img']),
             Expanded(
-                child: eventData == null
-                    ? const Center(child: CircularProgressIndicator())
-                    : RefreshIndicator(
-                        onRefresh: getData,
-                        strokeWidth: 2.5,
-                        child: eventData.length == 0
-                            ? const NoItemFound(
-                                ErrorMsg: "You Currently Have No Event",
-                                ErrorSubMag: "Wait for the Host to Share")
-                            : ListView.builder(
-                                scrollDirection: Axis.vertical,
-                                itemCount: eventData.length,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) => Container(
-                                  margin: const EdgeInsets.only(
-                                      left: 16, right: 16, bottom: 16),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: defaultBoxShadow(),
-                                      color: const Color(0xD7DAE8FC)),
-                                  child: Stack(children: <Widget>[
-                                    Column(children: <Widget>[
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: SizedBox(
-                                              height: 150,
-                                              width: 320,
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                                child: Image.network(
-                                                    eventData[index]['url'],
-                                                    fit: BoxFit.cover),
-                                              ),
+              child: eventData == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : RefreshIndicator(
+                      onRefresh: getData,
+                      strokeWidth: 2.5,
+                      child: eventData.length == 0
+                          ? const NoItemFound(
+                              errorMsg: "You Currently Have No Event",
+                              errorSubMag: "Wait for the Host to Share")
+                          : ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              itemCount: eventData.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) => Container(
+                                margin: const EdgeInsets.only(
+                                    left: 16, right: 16, bottom: 16),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: defaultBoxShadow(),
+                                    color: const Color(0xD7DAE8FC)),
+                                child: Stack(children: <Widget>[
+                                  Column(children: <Widget>[
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: SizedBox(
+                                            height: 150,
+                                            width: 320,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                              child: Image.network(
+                                                  eventData[index]['url'],
+                                                  fit: BoxFit.cover),
                                             ),
                                           ),
+                                        ),
 
-                                          // SizedBox(height: 16),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16),
-                                            child: Row(
-                                              children: <Widget>[
-                                                Container(
-                                                  child: Text(
-                                                          eventData[index]
-                                                              ['name'],
-                                                          style: boldTextStyle(
-                                                              size: 18))
-                                                      .expand(),
-                                                ),
-                                                Text(
-                                                    'Host: ${eventData[index]['host']}',
-                                                    style: const TextStyle(
-                                                        fontSize: 14)),
-                                              ],
+                                        // SizedBox(height: 16),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Container(
+                                                child: Text(
+                                                        eventData[index]
+                                                            ['name'],
+                                                        style: boldTextStyle(
+                                                            size: 18))
+                                                    .expand(),
+                                              ),
+                                              Text(
+                                                  'Host: ${eventData[index]['host']}',
+                                                  style: const TextStyle(
+                                                      fontSize: 14)),
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 10),
+                                          child: Row(children: [
+                                            Text(
+                                              eventData[index]['date']
+                                                  .toString()
+                                                  .substring(0, 10),
+                                              style:
+                                                  secondaryTextStyle(size: 16),
+                                            ).expand(),
+                                          ]),
+                                        )
+                                      ],
+                                    ),
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.white,
+                                          elevation: 4,
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(10.0),
+                                              bottomRight:
+                                                  Radius.circular(10.0),
                                             ),
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 10),
-                                            child: Row(children: [
-                                              Text(
-                                                eventData[index]['date']
-                                                    .toString()
-                                                    .substring(0, 10),
-                                                style: secondaryTextStyle(
-                                                    size: 16),
-                                              ).expand(),
-                                            ]),
-                                          )
-                                        ],
-                                      ),
-                                      ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            primary: Colors.white,
-                                            elevation: 4,
-                                            shape: const RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.only(
+                                          padding: const EdgeInsets.all(0.0),
+                                        ),
+                                        child: Container(
+                                          decoration: const BoxDecoration(
+                                            gradient: LinearGradient(
+                                                begin: Alignment.centerLeft,
+                                                end: Alignment.centerRight,
+                                                colors: [
+                                                  primaryColorLite,
+                                                  primaryColorDark
+                                                ]),
+                                            borderRadius: BorderRadius.only(
                                                 bottomLeft:
                                                     Radius.circular(10.0),
                                                 bottomRight:
-                                                    Radius.circular(10.0),
-                                              ),
-                                            ),
-                                            padding: const EdgeInsets.all(0.0),
+                                                    Radius.circular(10.0)),
                                           ),
-                                          child: Container(
-                                            decoration: const BoxDecoration(
-                                              gradient: LinearGradient(
-                                                  begin: Alignment.centerLeft,
-                                                  end: Alignment.centerRight,
-                                                  colors: [
-                                                    primaryColorLite,
-                                                    primaryColorDark
-                                                  ]),
-                                              borderRadius: BorderRadius.only(
-                                                  bottomLeft:
-                                                      Radius.circular(10.0),
-                                                  bottomRight:
-                                                      Radius.circular(10.0)),
-                                            ),
-                                            child: const Center(
-                                              child: Padding(
-                                                padding: EdgeInsets.all(18.0),
-                                                child: Text(
-                                                  "View Event Pictures",
-                                                  style:
-                                                      TextStyle(fontSize: 18),
-                                                  textAlign: TextAlign.center,
-                                                ),
+                                          child: const Center(
+                                            child: Padding(
+                                              padding: EdgeInsets.all(18.0),
+                                              child: Text(
+                                                "View Event Pictures",
+                                                style: TextStyle(fontSize: 18),
+                                                textAlign: TextAlign.center,
                                               ),
                                             ),
                                           ),
-                                          onPressed: () {
-                                            var Id = eventData[index]['ID'];
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PickGallery(Id: Id)));
-                                          })
-                                    ]),
+                                        ),
+                                        onPressed: () {
+                                          var id = eventData[index]['ID'];
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PickGallery(Id: id)));
+                                        })
                                   ]),
-                                ),
+                                ]),
                               ),
-                      ))
+                            ),
+                    ),
+            )
           ]),
         ]),
       ),

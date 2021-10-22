@@ -1,11 +1,12 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:snapped/src/edit_dp.dart';
 import 'package:snapped/utils/color.dart';
 
 import 'API Request/put.dart';
+import 'events_gallery.dart';
 
 class EditProfile extends StatefulWidget {
   final userID;
@@ -22,6 +23,7 @@ class _EditProfileState extends State<EditProfile> {
   // ======================================================================================================================================//
 
   final userID;
+
   _EditProfileState(this.userID);
 
   PickedFile? profilePick;
@@ -31,25 +33,24 @@ class _EditProfileState extends State<EditProfile> {
   bool passwordValidation = false;
   bool wrongPassword = false;
 
-
-  TextEditingController UsernameController = TextEditingController();
-  TextEditingController EmailController = TextEditingController();
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController oldPasswordController = TextEditingController();
 
-  var GETuserdetails = "http://snapped.kiska.co.in/api/v1/getuserdetails/";
+  var getUserDetails = "http://snapped.kiska.co.in/api/v1/getuserdetails/";
   var userDetails;
 
   @override
   void initState() {
     super.initState();
-    
-        getData();
+
+    getData();
   }
 
   Future<void> getData() async {
-    var userdetailsRes = await Dio().get("$GETuserdetails$userID");
-    userDetails = userdetailsRes.data;
+    var userDetailsRes = await Dio().get("$getUserDetails$userID");
+    userDetails = userDetailsRes.data;
     setState(() {});
   }
 
@@ -60,7 +61,7 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // APP BAR
+        // APP BAR
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
@@ -68,7 +69,10 @@ class _EditProfileState extends State<EditProfile> {
             icon: const Icon(Icons.arrow_back),
             color: primaryColorDark,
             onPressed: () {
-              finish(context);
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EventGallery(userID: userID)));
             },
           ),
           title: Text(
@@ -82,164 +86,131 @@ class _EditProfileState extends State<EditProfile> {
         body: userDetails == null
             ? const Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
-
-          child: Form(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ProfilePicture(),
-                const SizedBox(height: 16),
-                TextField(userDetails[0]['username'], "Username",
-                    UsernameController),
-                TextField(
-                    userDetails[0]['email'], "Email", EmailController),
-                newPasswordField(),
-                oldPasswordField(),
-
-                profileEditMsg("Account details is Successfully Saved",Colors.green,successVisible),
-                profileEditMsg("Old Password Not Match",Colors.red,wrongPassword),
-                GestureDetector(
-                  onTap: () async {
-                    //PUT REQUEST TO EDIT PROFILE
-                    if(oldPasswordController.text.isEmpty == false){
-                      print(
-                          '1: ${UsernameController.text}\n 2: ${EmailController.text}\n 3: ${newPasswordController.text} \n 4: ${oldPasswordController.text} \n $profilePick ');
-                      if(profilePick!=null) {
-                        var editRes = await editProfileDetails(
-                            profilePick,
-                            UsernameController.text,
-                            EmailController.text,
-                            newPasswordController.text,
-                            oldPasswordController.text
-                        ).editDetails(userID);
-                        print("Edit RESPONCE  : $editRes \n ${editRes.runtimeType}");
-                        if(editRes=='1'){
-                          setState(() {
-                            successVisible = true;
-                          });
-                          await Future.delayed(const Duration(seconds: 2));
-                          //MODE TO EVENT PAGE
-                          Navigator.pushNamed(context, '/event');
-                        }
-                        if(editRes=='-5'){
-                          wrongPassword = true;
-                          Fluttertoast.showToast(
-                              msg: "Old Password Not Match",
-                              textColor: Colors.red,
-                              toastLength: Toast.LENGTH_LONG,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1);
-
-                        }
-                        if(editRes=='-1'){
-                          Fluttertoast.showToast(
-                              msg: "Error! Try Again",
-                              textColor: Colors.red,
-                              toastLength: Toast.LENGTH_LONG,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1);
-
-                        }
-                        // SHOW SUCCESS MESSAGE
-                      }
-                      else{
-                        var editRes = await editInfoDetails(
-                            UsernameController.text,
-                            EmailController.text,
-                            newPasswordController.text,
-                            oldPasswordController.text
-                        ).editDetails(userID);
-                        print("Edit RESPONCE  : $editRes \n ${editRes.runtimeType}");
-                        if(editRes=='1'){
-                          setState(() {
-                            successVisible = true;
-                          });
-                          await Future.delayed(const Duration(seconds: 2));
-                          //MODE TO EVENT PAGE
-                          Navigator.pushNamed(context, '/event');
-                        }
-                        if(editRes=='-5'){
-                          wrongPassword = true;
-                          Fluttertoast.showToast(
-                              msg: "Old Password Not Match",
-                              textColor: Colors.red,
-                              toastLength: Toast.LENGTH_LONG,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1);
-
-                        }
-                        if(editRes=='-1'){
-                          Fluttertoast.showToast(
-                              msg: "Error! Try Again",
-                              textColor: Colors.red,
-                              toastLength: Toast.LENGTH_LONG,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1);
-
-                        }
-                      }
-
-                    }
-                    else{
-                      setState(() {
-                        Fluttertoast.showToast(
-                            msg: "Old Password Not Found",
-                            textColor: Colors.red,
-                            toastLength: Toast.LENGTH_LONG,
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 1);
-                        passwordValidation = true;
-                      });
-                    }
-
-                  },
-                  child: Container(
-                    // width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.center,
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 22, vertical: 10),
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    decoration: BoxDecoration(
-                        borderRadius:
-                        const BorderRadius.all(Radius.circular(5)),
-                        boxShadow: <BoxShadow>[
-                          BoxShadow(
-                              color: Colors.grey.shade200,
-                              offset: const Offset(2, 4),
-                              blurRadius: 5,
-                              spreadRadius: 2)
-                        ],
-                        gradient: const LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              Color(0xFF4CAAFF),
-                              Color(0xff06468e)
-                            ])),
-                    child: const Text(
-                      'Save Details',
-                      style: TextStyle(fontSize: 20, color: Colors.white),
-                    ),
+                child: Form(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        child: profilePicture(),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (contest) => EditDP(
+                                      userID: userID,
+                                      username: usernameController.text,
+                                      email: emailController.text,
+                                      pickURL: userDetails[0]['img'])));
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      textField(userDetails[0]['username'], "Username",
+                          usernameController),
+                      textField(
+                          userDetails[0]['email'], "Email", emailController),
+                      newPasswordField(),
+                      oldPasswordField(),
+                      profileEditMsg("Account details is Successfully Saved",
+                          Colors.green, successVisible),
+                      profileEditMsg(
+                          "Old Password Not Match", Colors.red, wrongPassword),
+                      GestureDetector(
+                        onTap: () async {
+                          //PUT REQUEST TO EDIT PROFILE
+                          if (oldPasswordController.text.isEmpty == false) {
+                            var editRes = await editInfoDetails(
+                                    usernameController.text,
+                                    emailController.text,
+                                    newPasswordController.text,
+                                    oldPasswordController.text)
+                                .editDetails(userID);
+                            if (editRes == '1') {
+                              setState(() {
+                                successVisible = true;
+                              });
+                              await Future.delayed(const Duration(seconds: 2));
+                              //MODE TO EVENT PAGE
+                              Navigator.pushNamed(context, '/event');
+                            }
+                            if (editRes == '-5') {
+                              wrongPassword = true;
+                              Fluttertoast.showToast(
+                                  msg: "Old Password Not Match",
+                                  textColor: Colors.red,
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1);
+                            }
+                            if (editRes == '-1') {
+                              Fluttertoast.showToast(
+                                  msg: "Error! Try Again",
+                                  textColor: Colors.red,
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1);
+                            }
+                          } else {
+                            setState(() {
+                              Fluttertoast.showToast(
+                                  msg: "Old Password Not Found",
+                                  textColor: Colors.red,
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1);
+                              passwordValidation = true;
+                            });
+                          }
+                        },
+                        child: Container(
+                          // width: MediaQuery.of(context).size.width,
+                          alignment: Alignment.center,
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 22, vertical: 10),
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(5)),
+                              boxShadow: <BoxShadow>[
+                                BoxShadow(
+                                    color: Colors.grey.shade200,
+                                    offset: const Offset(2, 4),
+                                    blurRadius: 5,
+                                    spreadRadius: 2)
+                              ],
+                              gradient: const LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: [
+                                    Color(0xFF4CAAFF),
+                                    Color(0xff06468e)
+                                  ])),
+                          child: const Text(
+                            'Save Details',
+                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-        ));
+              ));
   }
 
   // ======================================================================================================================================//
   // ----------------------------------------------------------- Widget Functionalities ---------------------------------------------------//
   // ======================================================================================================================================//
 
-  Widget ProfilePicture() {
+  Widget profilePicture() {
     return Center(
       child: Stack(children: [
-        CircleAvatar(
-          radius: 60.0,
-          backgroundImage: profilePick == null
-              ? NetworkImage(userDetails[0]['img'])
-              : FileImage(File(profilePick?.path ?? userDetails[0]['img'])) as ImageProvider,
+        Hero(
+          tag: "ProfilePickTag",
+          child: CircleAvatar(
+            radius: 60.0,
+            backgroundImage: userDetails[0]['img'] != ''
+                ? NetworkImage(userDetails[0]['img'])
+                : const AssetImage("assets/user.png") as ImageProvider,
+          ),
         ),
         Positioned(
           bottom: 4,
@@ -249,8 +220,14 @@ class _EditProfileState extends State<EditProfile> {
             width: 30,
             child: FloatingActionButton(
               onPressed: () {
-                showModalBottomSheet(
-                    context: context, builder: ((builder) => bottomSheet()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (contest) => EditDP(
+                            userID: userID,
+                            username: usernameController.text,
+                            email: emailController.text,
+                            pickURL: userDetails[0]['img'])));
               },
               backgroundColor: Colors.blue,
               elevation: 0,
@@ -266,7 +243,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Padding SnappedLogo() {
+  Padding snappedLogo() {
     return Padding(
       padding: const EdgeInsets.all(18),
       child: Image.asset(
@@ -276,17 +253,17 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Padding TextField(
-      String Myinitvalue, String MyLabel, TextEditingController MyController) {
+  Padding textField(
+      String myInitvalue, String myLabel, TextEditingController myController) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
       child: AppTextField(
         textStyle: primaryTextStyle(weight: FontWeight.bold, size: 18),
         textFieldType: TextFieldType.EMAIL,
         cursorColor: primaryColorDark,
-        controller: MyController..text = Myinitvalue,
+        controller: myController..text = myInitvalue,
         decoration: InputDecoration(
-          labelText: MyLabel,
+          labelText: myLabel,
           labelStyle: const TextStyle(color: primaryColorDark),
           focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: primaryColorLite, width: 1.5)),
@@ -330,7 +307,10 @@ class _EditProfileState extends State<EditProfile> {
           labelText: "Old password*",
           hintText: "Old Password*",
           errorText: passwordValidation ? "Please Enter Old password" : null,
-          errorStyle: const TextStyle(color: Colors.red,fontWeight: FontWeight.bold,),
+          errorStyle: const TextStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+          ),
           errorBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.red, width: 1.5)),
           focusedBorder: const OutlineInputBorder(
@@ -343,58 +323,17 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Widget bottomSheet() {
-    return Container(
-      height: 100.0,
-      width: MediaQuery.of(context).size.width,
-      margin: EdgeInsets.all(20),
-      child: Column(
-        children: [
-          const Text(
-            "Choose Profile photo",
-            style: TextStyle(fontSize: 20.0),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              FlatButton.icon(
-                  onPressed: () async {
-                    final pickedfile =
-                    await _picker.getImage(source: ImageSource.camera);
-                    setState(() {
-                      profilePick = pickedfile;
-                    });
-                  },
-                  icon: const Icon(Icons.camera_sharp),
-                  label: const Text("Camara")),
-              FlatButton.icon(
-                  onPressed: () async {
-                    final pickedfile =
-                    await _picker.getImage(source: ImageSource.gallery);
-                    setState(() {
-                      profilePick = pickedfile;
-                    });
-                  },
-                  icon: const Icon(Icons.image_rounded),
-                  label: const Text("Gallery"))
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
-  Padding profileEditMsg(String Msg,Color mycolor, bool isvisible) {
+  Padding profileEditMsg(String msg, Color myColor, bool isVisible) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Visibility(
-        visible: isvisible,
+        visible: isVisible,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            Msg,
+            msg,
             textAlign: TextAlign.center,
-            style: TextStyle(color: mycolor, fontWeight: FontWeight.bold),
+            style: TextStyle(color: myColor, fontWeight: FontWeight.bold),
           ),
         ),
       ),

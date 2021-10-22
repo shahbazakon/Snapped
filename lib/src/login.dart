@@ -8,7 +8,7 @@ import 'Widget/bezier_container.dart';
 import 'Widget/widgets.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key? key, required this.title}) : super(key: key);
+  const LoginPage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
 
-  Widget _entryField(String title, TextEditingController MyController) {
+  Widget _entryField(String title, TextEditingController myController) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
             height: 10,
           ),
           TextField(
-              controller: MyController,
+              controller: myController,
               decoration: const InputDecoration(
                   border: InputBorder.none,
                   fillColor: Color(0xfff3f3f4),
@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _passwordntryField(String title, TextEditingController MyController) {
+  Widget _passwordntryField(String title, TextEditingController myController) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
             height: 10,
           ),
           TextField(
-              controller: MyController,
+              controller: myController,
               obscureText: _isObscure,
               decoration: InputDecoration(
                   suffixIcon: IconButton(
@@ -76,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                   border: InputBorder.none,
-                  fillColor: Color(0xfff3f3f4),
+                  fillColor: const Color(0xfff3f3f4),
                   filled: true))
         ],
       ),
@@ -88,12 +88,8 @@ class _LoginPageState extends State<LoginPage> {
       onTap: () async {
         var userRes = await LogIn(emailController.text, passwordController.text)
             .PostData();
-        print("USERNAME: ${emailController.text}");
-        print("PASSWORD: ${passwordController.text}");
-        print("loin page get $userRes");
         if(emailController.text.isEmpty == false && passwordController.text.isEmpty == false) {
           if (userRes.data['code'] == '-1') {
-            print("Wrong Username and Password");
             setState(() {
               wrongValues = true;
               indelidDetalis = false;

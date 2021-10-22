@@ -6,6 +6,7 @@ import 'package:snapped/utils/color.dart';
 
 class FullPreview extends StatefulWidget {
   final pickURL;
+
   const FullPreview({Key? key, @required this.pickURL}) : super(key: key);
 
   @override
@@ -13,8 +14,8 @@ class FullPreview extends StatefulWidget {
 }
 
 class _FullPreviewState extends State<FullPreview> {
-
   final pickURL;
+
   _FullPreviewState(this.pickURL);
 
   @override
@@ -38,25 +39,22 @@ class _FullPreviewState extends State<FullPreview> {
       ),
       body: Center(
         child: Hero(
-            tag: "pickTag",
-            child: Image.network(pickURL, fit: BoxFit.cover)),
+            tag: "pickTag", child: Image.network(pickURL, fit: BoxFit.cover)),
       ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            onPressed: () {String path = pickURL;
-            GallerySaver.saveImage(path)
-                .then((success) {
-              Fluttertoast.showToast(
-                  msg: "Image is saved",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 1);
-              setState(() {
-                print('Image is saved');
+            onPressed: () {
+              String path = pickURL;
+              GallerySaver.saveImage(path).then((success) {
+                Fluttertoast.showToast(
+                    msg: "Image is saved",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 1);
+                setState(() {});
               });
-            });
             },
             backgroundColor: primaryColorDark,
             elevation: 0,
@@ -66,7 +64,7 @@ class _FullPreviewState extends State<FullPreview> {
               color: Colors.white,
             ),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           FloatingActionButton(
             onPressed: () {
               Share.share("Snapped Event Pick \n $pickURL");

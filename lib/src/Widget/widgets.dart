@@ -102,9 +102,7 @@ class SnappedAppBarState extends State<SnappedAppBar> {
                 margin: const EdgeInsets.only(right: 20, top: 8),
                 child: CircleAvatar(
                   radius: 20,
-                  backgroundImage: widget.ProfilePick == null
-                      ? const AssetImage('assets/user.png')
-                      : NetworkImage(widget.ProfilePick) as ImageProvider,
+                  backgroundImage: widget.ProfilePick!='' ? NetworkImage(widget.ProfilePick) : const AssetImage("assets/user.png") as ImageProvider,
                 ),
               ),
             ),

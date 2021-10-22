@@ -3,26 +3,25 @@ import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 
-class editProfileDetails {
+
+class editProfilePick {
 
   PickedFile? profilePick;
-  String? UsernameController;
-  String? EmailController;
-  String? newPasswordController;
+  String? Username;
+  String? Email;
   String? oldPasswordController;
 
-  editProfileDetails(
+  editProfilePick(
       this.profilePick,
-      this.UsernameController,
-      this.EmailController,
-      this.newPasswordController,
-      this.oldPasswordController
+      this.Username,
+      this.Email,
+      this.oldPasswordController,
       );
 
   editDetails(userId) async {
 
-    print("edit Profile Details Called".toUpperCase());
-    print("editDetails: http://snapped.kiska.co.in/user/edit/$userId");
+    print("edit Profile Picture Called".toUpperCase());
+    print("edit Picture: http://snapped.kiska.co.in/user/edit/$userId");
 
     String fileName = profilePick!.path.split('/').last;
     print('PATH: ${profilePick!.path}');
@@ -36,24 +35,25 @@ class editProfileDetails {
         // contentType: MediaType("image", fileName.split(".").last),
       );
       var formData = FormData.fromMap({
-      'username': UsernameController,
-      'email' : EmailController,
-      'password' : oldPasswordController,
-      'newpassword' : newPasswordController,
-      'image': image,
+        'image': image,
+        'username': Username,
+        'email' : Email,
+        'password' : oldPasswordController,
+        'newpassword' : '',
+        'password' : oldPasswordController,
       });
       var res = await Dio()
           .put('http://snapped.kiska.co.in/user/edit/$userId',
           data: formData)
           .then((response) {
         response.statusCode == 200
-            ? print("successful edit Profile Details \n RESPONSE: ${response.data} ".toUpperCase())
+            ? print("successful edit Profile Picture \n RESPONSE: ${response.data} ".toUpperCase())
             : print("post request is fail".toUpperCase());
 
-        print("Responce Code :  ${response.data} ".toUpperCase());
+        print("Responce Code :  <${response.data}> ${response.data.runtimeType}".toUpperCase());
         return response.data;
 
-          });
+      });
       return res;
     }
 
@@ -71,7 +71,6 @@ class editProfileDetails {
   }
 }
 
-
 class editInfoDetails {
   String? UsernameController;
   String? EmailController;
@@ -87,12 +86,8 @@ class editInfoDetails {
 
   editDetails(userId) async {
 
-    print("edit infomation Details Called".toUpperCase());
+    print("edit information Details Called".toUpperCase());
     print("editDetails: http://snapped.kiska.co.in/user/edit/$userId");
-
-
-
-
     try {
 
       var formData = FormData.fromMap({
